@@ -10,7 +10,7 @@ import scipy as sc
 import yfinance as yf
 import time
 from pathlib import Path
-from scipy.stats import jarque_bera, rankdata, kendalltau, gaussian_kde, norm, t
+from scipy.stats import jarque_bera, rankdata, kendalltau, norm, t
 from numpy.random import multivariate_normal
 from copulas.bivariate import Clayton, Frank, Gumbel
 
@@ -19,6 +19,10 @@ waahid= "GC=F"#"BTC-USD"
 ithnaan=  "SI=F" #"ETH-USD"
 inizio_periodo="2015-01-01"
 fine_periodo="2026-01-01"
+
+# Toggle visualizzazioni per evitare grafici ridondanti
+SHOW_EMPIRICAL_SCATTER = True
+SHOW_SIMULATION_COMPARISON = True
 
 #grafico rendimenti
 def returns_graphs():
@@ -181,6 +185,79 @@ def plot_empirical_copula(u_vals, v_vals, title="Copula empirica C_n(u,v)"):
     plt.grid(True, alpha=0.2)
     plt.tight_layout()
     plt.show()
+
+
+def clayton_cdf(u_vals, v_vals, theta):
+    if theta <= 0:
+        return np.full_like(u_vals, np.nan, dtype=float)
+    with np.errstate(over="ignore", invalid="ignore"):
+        term = u_vals ** (-theta) + v_vals ** (-theta) - 1
+        c_val = term ** (-1 / theta)
+    return np.clip(c_val, 0, 1)
+
+
+def frank_cdf(u_vals, v_vals, theta):
+    if np.isclose(theta, 0.0):
+        return u_vals * v_vals
+    num = (np.exp(-theta * u_vals) - 1) * (np.exp(-theta * v_vals) - 1)
+    den = np.exp(-theta) - 1
+    c_val = -(1 / theta) * np.log1p(num / den)
+    return np.clip(c_val, 0, 1)
+
+
+def gumbel_cdf(u_vals, v_vals, theta):
+    if theta < 1:
+        return np.full_like(u_vals, np.nan, dtype=float)
+    x = -np.log(np.clip(u_vals, 1e-12, 1))
+    y = -np.log(np.clip(v_vals, 1e-12, 1))
+    c_val = np.exp(-((x ** theta + y ** theta) ** (1 / theta)))
+    return np.clip(c_val, 0, 1)
+
+
+def gaussian_cdf(u_vals, v_vals, rho):
+    if abs(rho) >= 1:
+        return np.full_like(u_vals, np.nan, dtype=float)
+    u_safe = np.clip(u_vals, 1e-12, 1 - 1e-12)
+    v_safe = np.clip(v_vals, 1e-12, 1 - 1e-12)
+    x = norm.ppf(u_safe)
+    y = norm.ppf(v_safe)
+    points = np.column_stack((x, y))
+    cov = np.array([[1.0, rho], [rho, 1.0]])
+    c_vals = np.array([
+        sc.stats.multivariate_normal.cdf(point, mean=np.zeros(2), cov=cov)
+        for point in points
+    ])
+    return np.clip(c_vals, 0, 1)
+
+
+def evaluate_copula_cdf_on_grid(grid, family, **params):
+    u_mesh, v_mesh = np.meshgrid(grid, grid)
+    u_flat = u_mesh.ravel()
+    v_flat = v_mesh.ravel()
+
+    if family == "clayton":
+        c_flat = clayton_cdf(u_flat, v_flat, params["theta"])
+    elif family == "frank":
+        c_flat = frank_cdf(u_flat, v_flat, params["theta"])
+    elif family == "gumbel":
+        c_flat = gumbel_cdf(u_flat, v_flat, params["theta"])
+    elif family == "gaussian":
+        c_flat = gaussian_cdf(u_flat, v_flat, params["rho"])
+    else:
+        raise ValueError(f"Famiglia non supportata per CDF su griglia: {family}")
+
+    return c_flat.reshape(u_mesh.shape)
+
+
+def copula_grid_distance_metrics(c_empirical, c_parametric):
+    valid = np.isfinite(c_empirical) & np.isfinite(c_parametric)
+    if not np.any(valid):
+        return np.nan, np.nan
+
+    diff = c_empirical[valid] - c_parametric[valid]
+    mse = np.mean(diff ** 2)
+    max_abs = np.max(np.abs(diff))
+    return mse, max_abs
 
 
 def clayton_density(u_vals, v_vals, theta):
@@ -432,7 +509,8 @@ print("\nValori di u e v combinati\n", data_uv)
 
 # Vera copula empirica C_n(u,v) su griglia
 grid_emp, c_n_emp = build_empirical_copula_grid(u, v, grid_size=60)
-plot_empirical_copula(u, v, title="Copula empirica C_n(u,v) - Oro/Argento")
+if SHOW_EMPIRICAL_SCATTER:
+    plot_empirical_copula(u, v, title="Pseudo-osservazioni (u,v) nel quadrato unitario - Oro/Argento")
 print(f"\nCopula empirica C_n(0.05, 0.05): {np.mean((u <= 0.05) & (v <= 0.05)):.4f}")
 print(f"Copula empirica C_n(0.95, 0.95): {np.mean((u <= 0.95) & (v <= 0.95)):.4f}")
 
@@ -471,6 +549,23 @@ rho_t, nu_t, ll_t_mle = fit_student_t_copula_mle(u, v)
 lambda_t = 2 * t.cdf(-np.sqrt(((nu_t + 1) * (1 - rho_t)) / (1 + rho_t)), df=nu_t + 1)
 print(f"\nStudent-t Copula:\nRho: {rho_t:.4f}\nNu: {nu_t:.4f}\nLower Tail Dependence: {lambda_t:.4f}\nUpper Tail Dependence: {lambda_t:.4f}")
 
+# Confronto diretto C_n(u,v) vs C_theta(u,v) su griglia (Cramer-von Mises discreto + distanza sup)
+c_grid_clayton = evaluate_copula_cdf_on_grid(grid_emp, "clayton", theta=copula_clayton.theta)
+c_grid_frank = evaluate_copula_cdf_on_grid(grid_emp, "frank", theta=copula_frank.theta)
+c_grid_gumbel = evaluate_copula_cdf_on_grid(grid_emp, "gumbel", theta=copula_gumbel.theta)
+c_grid_gaussian = evaluate_copula_cdf_on_grid(grid_emp, "gaussian", rho=rho_gauss)
+
+mse_clayton, dmax_clayton = copula_grid_distance_metrics(c_n_emp, c_grid_clayton)
+mse_frank, dmax_frank = copula_grid_distance_metrics(c_n_emp, c_grid_frank)
+mse_gumbel, dmax_gumbel = copula_grid_distance_metrics(c_n_emp, c_grid_gumbel)
+mse_gaussian, dmax_gaussian = copula_grid_distance_metrics(c_n_emp, c_grid_gaussian)
+
+print("\n=== Distanza C_n vs C_theta su griglia ===")
+print(f"Clayton - MSE: {mse_clayton:.6f}, Max|Delta|: {dmax_clayton:.6f}")
+print(f"Frank   - MSE: {mse_frank:.6f}, Max|Delta|: {dmax_frank:.6f}")
+print(f"Gumbel  - MSE: {mse_gumbel:.6f}, Max|Delta|: {dmax_gumbel:.6f}")
+print(f"Gaussian- MSE: {mse_gaussian:.6f}, Max|Delta|: {dmax_gaussian:.6f}")
+
 # numero osservazioni in data_uv
 n_sim = len(data_uv)
 
@@ -481,18 +576,19 @@ sim_gaussian = simulate_gaussian_copula(n_sim, rho_gauss)
 sim_student_t = simulate_student_t_copula(n_sim, rho_t, nu_t)
 
 # Chiamata alla funzione di confronto
-plot_copula_comparison(
-    data_uv,
-    [sim_clayton, sim_frank, sim_gumbel, sim_gaussian, sim_student_t],
-    [
-        "Clayton (per coda inf)",
-        "Frank (per dip centr)",
-        "Gumbel (per coda sup)",
-        "Gaussian (ellittica)",
-        "Student-t (code simm)"
-    ],
-    "Confronto tra Copule Stimate e Dati Empirici"
-)
+if SHOW_SIMULATION_COMPARISON:
+    plot_copula_comparison(
+        data_uv,
+        [sim_clayton, sim_frank, sim_gumbel, sim_gaussian, sim_student_t],
+        [
+            "Clayton (per coda inf)",
+            "Frank (per dip centr)",
+            "Gumbel (per coda sup)",
+            "Gaussian (ellittica)",
+            "Student-t (code simm)"
+        ],
+        "Confronto tra Copule Stimate e Dati Empirici"
+    )
 
 # Funzione per calcolare AIC e BIC (classico confronto MLE)
 def calculate_aic_bic(log_likelihood, num_params, n_obs):
