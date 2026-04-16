@@ -18,7 +18,7 @@ from copulas.bivariate import Clayton, Frank, Gumbel
 waahid= "GC=F"#"BTC-USD"
 ithnaan=  "SI=F" #"ETH-USD"
 inizio_periodo="2015-01-01"
-fine_periodo="2025-01-01"
+fine_periodo="2026-01-01"
 
 #grafico rendimenti
 def returns_graphs():
