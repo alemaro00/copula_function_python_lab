@@ -170,14 +170,15 @@ def build_empirical_copula_grid(u_vals, v_vals, grid_size=60):
     return grid, c_n
 
 
-def plot_empirical_copula(grid, c_n, title="Copula empirica C_n(u,v)"):
-    u_mesh, v_mesh = np.meshgrid(grid, grid)
+def plot_empirical_copula(u_vals, v_vals, title="Copula empirica C_n(u,v)"):
     plt.figure(figsize=(8, 6))
-    contour = plt.contourf(u_mesh, v_mesh, c_n, levels=25, cmap="viridis")
-    plt.colorbar(contour, label="C_n(u,v)")
+    plt.scatter(u_vals, v_vals, alpha=0.5, s=18, color="steelblue")
     plt.xlabel("u")
     plt.ylabel("v")
     plt.title(title)
+    plt.xlim(0, 1)
+    plt.ylim(0, 1)
+    plt.grid(True, alpha=0.2)
     plt.tight_layout()
     plt.show()
 
@@ -431,7 +432,7 @@ print("\nValori di u e v combinati\n", data_uv)
 
 # Vera copula empirica C_n(u,v) su griglia
 grid_emp, c_n_emp = build_empirical_copula_grid(u, v, grid_size=60)
-plot_empirical_copula(grid_emp, c_n_emp, title="Copula empirica C_n(u,v) - Oro/Argento")
+plot_empirical_copula(u, v, title="Copula empirica C_n(u,v) - Oro/Argento")
 print(f"\nCopula empirica C_n(0.05, 0.05): {np.mean((u <= 0.05) & (v <= 0.05)):.4f}")
 print(f"Copula empirica C_n(0.95, 0.95): {np.mean((u <= 0.95) & (v <= 0.95)):.4f}")
 
