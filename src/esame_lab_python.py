@@ -6,6 +6,9 @@ import matplotlib.pyplot as plt
 import scipy as sc
 import yfinance as yf
 import time
+import sys
+import re
+from datetime import datetime
 from pathlib import Path
 from scipy.stats import jarque_bera, rankdata, kendalltau, norm, t
 from scipy.special import gammaln
@@ -17,6 +20,61 @@ waahid= "GC=F"#"BTC-USD"
 ithnaan=  "SI=F" #"ETH-USD"
 inizio_periodo="2015-01-01"
 fine_periodo="2026-01-01"
+
+
+def validate_inputs(asset_a, asset_b, start_date, end_date):
+    if not isinstance(asset_a, str) or not asset_a.strip():
+        raise ValueError("Ticker waahid non valido: inserire una stringa non vuota.")
+    if not isinstance(asset_b, str) or not asset_b.strip():
+        raise ValueError("Ticker ithnaan non valido: inserire una stringa non vuota.")
+
+    asset_a = asset_a.strip()
+    asset_b = asset_b.strip()
+    if asset_a == asset_b:
+        raise ValueError("I due ticker sono uguali: inserire due strumenti diversi.")
+
+    try:
+        start_dt = datetime.strptime(start_date, "%Y-%m-%d")
+        end_dt = datetime.strptime(end_date, "%Y-%m-%d")
+    except ValueError as exc:
+        raise ValueError(
+            "Formato data non valido. Usa YYYY-MM-DD per inizio_periodo e fine_periodo."
+        ) from exc
+
+    if start_dt >= end_dt:
+        raise ValueError("Intervallo date non valido: inizio_periodo deve essere minore di fine_periodo.")
+
+
+class TeeStream:
+    def __init__(self, *streams):
+        self.streams = streams
+
+    def write(self, data):
+        for stream in self.streams:
+            stream.write(data)
+        return len(data)
+
+    def flush(self):
+        for stream in self.streams:
+            stream.flush()
+
+
+def build_output_log_path(asset_a, asset_b, start_date, end_date):
+    output_dir = Path(__file__).resolve().parents[1] / "output"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    raw_name = f"{asset_a}&{asset_b}_{start_date}&{end_date}.txt"
+    safe_name = re.sub(r'[<>:"/\\|?*]+', "-", raw_name)
+    return output_dir / safe_name
+
+
+LOG_FILE_PATH = build_output_log_path(waahid, ithnaan, inizio_periodo, fine_periodo)
+_log_file_handle = LOG_FILE_PATH.open("w", encoding="utf-8", buffering=1)
+_original_stdout = sys.stdout
+_original_stderr = sys.stderr
+sys.stdout = TeeStream(_original_stdout, _log_file_handle)
+sys.stderr = TeeStream(_original_stderr, _log_file_handle)
+
+validate_inputs(waahid, ithnaan, inizio_periodo, fine_periodo)
 
 # Toggle visualizzazioni per evitare grafici ridondanti
 SHOW_EMPIRICAL_SCATTER = True
@@ -466,6 +524,7 @@ def simulate_student_t_copula(n_obs, rho, nu):
 
 def download_close_with_cache(tickers, start, end, max_retries=4, base_wait=3):
     cache_file = Path(__file__).with_name("prezzi_close_cache.csv")
+    expected_tickers = list(dict.fromkeys(tickers))
 
     for attempt in range(1, max_retries + 1):
         try:
@@ -486,6 +545,13 @@ def download_close_with_cache(tickers, start, end, max_retries=4, base_wait=3):
 
             data = data.dropna(how="all")
             if not data.empty:
+                missing_cols = [col for col in expected_tickers if col not in data.columns]
+                if missing_cols:
+                    raise RuntimeError(
+                        "Ticker non trovati o senza dati su Yahoo nel periodo richiesto: "
+                        + ", ".join(missing_cols)
+                    )
+                data = data[expected_tickers]
                 data.to_csv(cache_file)
                 print(f"Dati scaricati da Yahoo e salvati in cache: {cache_file.name}")
                 return data
@@ -497,7 +563,14 @@ def download_close_with_cache(tickers, start, end, max_retries=4, base_wait=3):
 
     if cache_file.exists():
         cached = pd.read_csv(cache_file, index_col=0, parse_dates=True)
-        cached = cached[[col for col in tickers if col in cached.columns]]
+        missing_in_cache = [col for col in expected_tickers if col not in cached.columns]
+        if missing_in_cache:
+            raise RuntimeError(
+                "Yahoo rate-limited e cache incompleta: mancano i ticker "
+                + ", ".join(missing_in_cache)
+                + "."
+            )
+        cached = cached[expected_tickers]
         cached = cached.dropna(how="all")
         if not cached.empty:
             print(f"Yahoo rate-limited: uso cache locale {cache_file.name}")
@@ -517,10 +590,14 @@ print(f"Numero totale di celle NaN: {cells_with_nan}\n")
 
 # Pulizia: rimuove le righe con almeno un NaN
 dfgood = df1.loc[~row_has_nan].copy()
+if dfgood.empty:
+    raise RuntimeError("Nessun dato disponibile dopo la rimozione dei NaN. Controlla ticker e periodo.")
 print(dfgood)
 
 #calcolo rendimenti logaritmici
 returns=np.log(dfgood/dfgood.shift(1)).dropna()
+if returns.empty:
+    raise RuntimeError("Rendimenti vuoti dopo il calcolo logaritmico. Verifica ticker e finestra temporale.")
 print("\n=== Rendimenti logaritmici ===\n")
 print(returns)
 
@@ -828,5 +905,10 @@ print(f"Gumbel  - AIC: {aic_gumbel:.2f}, BIC: {bic_gumbel:.2f}, Log-Likelihood M
 print(f"Gaussian- AIC: {aic_gaussian:.2f}, BIC: {bic_gaussian:.2f}, Log-Likelihood MLE: {ll_gaussian:.2f}")
 print(f"Student-t- AIC: {aic_student_t:.2f}, BIC: {bic_student_t:.2f}, Log-Likelihood MLE: {ll_student_t:.2f}")
 print(f"Mixture - AIC: {aic_mixture:.2f}, BIC: {bic_mixture:.2f}, Log-Likelihood MLE: {ll_mixture:.2f}")
+
+print(f"\nOutput completo salvato in: {LOG_FILE_PATH}")
+sys.stdout = _original_stdout
+sys.stderr = _original_stderr
+_log_file_handle.close()
 
 #creare una copula per osservare la dipendenza nelle code superiori tra oro, argento e vix
