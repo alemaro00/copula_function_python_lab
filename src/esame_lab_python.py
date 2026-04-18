@@ -127,8 +127,8 @@ def corr_measures():
     quantile_bound = 0.05
     empirical_lambda_L = np.mean((u < quantile_bound) & (v < quantile_bound)) / quantile_bound
     empirical_lambda_U = np.mean((u > 1 - quantile_bound) & (v > 1 - quantile_bound)) / quantile_bound
-    print(f"Lower Tail Dependence: {empirical_lambda_L:.4f}")
-    print(f"Upper Tail Dependence: {empirical_lambda_U:.4f}")
+    print(f"Lower Tail Dependence (soglia q={quantile_bound}): {empirical_lambda_L:.4f}")
+    print(f"Upper Tail Dependence (soglia q={1 - quantile_bound}): {empirical_lambda_U:.4f}")
 # Funzione per plottare confronto copule
 def plot_copula_comparison(real_data, sim_data_list, labels, title):
     total_plots = len(sim_data_list) + 1
@@ -614,6 +614,61 @@ print(f"\nGaussian Copula:\nRho: {rho_gauss:.4f}\nLower Tail Dependence: {lambda
 rho_t, nu_t, ll_t_mle = fit_student_t_copula_mle(u, v)
 lambda_t = 2 * t.cdf(-np.sqrt(((nu_t + 1) * (1 - rho_t)) / (1 + rho_t)), df=nu_t + 1)
 print(f"\nStudent-t Copula:\nRho: {rho_t:.4f}\nNu: {nu_t:.4f}\nLower Tail Dependence: {lambda_t:.4f}\nUpper Tail Dependence: {lambda_t:.4f}")
+
+# Verifica dipendenza nella zona centrale: [30%, 70%] x [30%, 70%]
+center_low, center_high = 0.30, 0.70
+p_emp_center = np.mean(
+    (u > center_low) & (u <= center_high) & (v > center_low) & (v <= center_high)
+)
+
+def rectangle_prob_from_cdf(cdf_func, low, high, **params):
+    low_arr = np.array([low], dtype=float)
+    high_arr = np.array([high], dtype=float)
+    c_hh = float(cdf_func(high_arr, high_arr, **params)[0])
+    c_lh = float(cdf_func(low_arr, high_arr, **params)[0])
+    c_hl = float(cdf_func(high_arr, low_arr, **params)[0])
+    c_ll = float(cdf_func(low_arr, low_arr, **params)[0])
+    p_rect = c_hh - c_lh - c_hl + c_ll
+    return float(np.clip(p_rect, 0.0, 1.0))
+
+p_center_clayton = rectangle_prob_from_cdf(
+    clayton_cdf, center_low, center_high, theta=copula_clayton.theta
+)
+p_center_frank = rectangle_prob_from_cdf(
+    frank_cdf, center_low, center_high, theta=copula_frank.theta
+)
+p_center_gumbel = rectangle_prob_from_cdf(
+    gumbel_cdf, center_low, center_high, theta=copula_gumbel.theta
+)
+p_center_gaussian = rectangle_prob_from_cdf(
+    gaussian_cdf, center_low, center_high, rho=rho_gauss
+)
+p_center_student_t = rectangle_prob_from_cdf(
+    student_t_cdf, center_low, center_high, rho=rho_t, nu=nu_t
+)
+
+print("\n=== Dipendenza centrale (30%-70%) ===")
+print(f"Empirica P(0.30<U<=0.70, 0.30<V<=0.70): {p_emp_center:.4f}")
+print(
+    f"Clayton   model: {p_center_clayton:.4f}, "
+    f"|errore|: {abs(p_emp_center - p_center_clayton):.4f}"
+)
+print(
+    f"Frank     model: {p_center_frank:.4f}, "
+    f"|errore|: {abs(p_emp_center - p_center_frank):.4f}"
+)
+print(
+    f"Gumbel    model: {p_center_gumbel:.4f}, "
+    f"|errore|: {abs(p_emp_center - p_center_gumbel):.4f}"
+)
+print(
+    f"Gaussian  model: {p_center_gaussian:.4f}, "
+    f"|errore|: {abs(p_emp_center - p_center_gaussian):.4f}"
+)
+print(
+    f"Student-t model: {p_center_student_t:.4f}, "
+    f"|errore|: {abs(p_emp_center - p_center_student_t):.4f}"
+)
 
 # Confronto diretto C_n(u,v) vs C_theta(u,v) su griglia (Cramer-von Mises discreto + distanza sup)
 c_grid_clayton = evaluate_copula_cdf_on_grid(grid_emp, "clayton", theta=copula_clayton.theta)
