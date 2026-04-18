@@ -17,9 +17,9 @@ from copulas.bivariate import Clayton, Frank, Gumbel
 
 #cambiare qualsiasi commodities, azione, strumento finanziario preso da yahoo finance
 waahid= "GC=F"#"BTC-USD"
-ithnaan=  "SI=F" #"ETH-USD"
-inizio_periodo="2015-01-01"
-fine_periodo="2026-01-01"
+ithnaan=  "SI=F"#"ETH-USD"
+inizio_periodo="2007-01-01"
+fine_periodo="2026-04-10"
 
 
 def validate_inputs(asset_a, asset_b, start_date, end_date):

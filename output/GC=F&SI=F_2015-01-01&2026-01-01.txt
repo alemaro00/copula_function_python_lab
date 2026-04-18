@@ -176,7 +176,7 @@ Clayton   model: 0.2312, |errore|: 0.0065
 Frank     model: 0.2361, |errore|: 0.0016
 Gumbel    model: 0.2335, |errore|: 0.0042
 Gaussian  model: 0.2246, |errore|: 0.0131
-Student-t model: 0.2334, |errore|: 0.0043
+Student-t model: 0.2333, |errore|: 0.0044
 Mixture   model: 0.2331, |errore|: 0.0046
 
 === Distanza C_n vs C_theta su griglia ===
@@ -184,7 +184,7 @@ Clayton - MSE: 0.000118, Max|Delta|: 0.030839
 Frank   - MSE: 0.000030, Max|Delta|: 0.018717
 Gumbel  - MSE: 0.000033, Max|Delta|: 0.017852
 Gaussian- MSE: 0.000005, Max|Delta|: 0.008786
-Student-t- MSE: 0.000002, Max|Delta|: 0.006822
+Student-t- MSE: 0.000002, Max|Delta|: 0.006824
 Mixture - MSE: 0.000005, Max|Delta|: 0.008692
 
 === AIC, BIC e Log-Likelihood (MLE) per ogni copula ===
