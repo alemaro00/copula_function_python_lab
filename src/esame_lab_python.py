@@ -231,6 +231,22 @@ def gaussian_cdf(u_vals, v_vals, rho):
     return np.clip(c_vals, 0, 1)
 
 
+def student_t_cdf(u_vals, v_vals, rho, nu):
+    if abs(rho) >= 1 or nu <= 0:
+        return np.full_like(u_vals, np.nan, dtype=float)
+    u_safe = np.clip(u_vals, 1e-12, 1 - 1e-12)
+    v_safe = np.clip(v_vals, 1e-12, 1 - 1e-12)
+    x = t.ppf(u_safe, df=nu)
+    y = t.ppf(v_safe, df=nu)
+    points = np.column_stack((x, y))
+    shape = np.array([[1.0, rho], [rho, 1.0]])
+    c_vals = np.array([
+        sc.stats.multivariate_t.cdf(point, loc=np.zeros(2), shape=shape, df=nu)
+        for point in points
+    ])
+    return np.clip(c_vals, 0, 1)
+
+
 def evaluate_copula_cdf_on_grid(grid, family, **params):
     u_mesh, v_mesh = np.meshgrid(grid, grid)
     u_flat = u_mesh.ravel()
@@ -244,6 +260,8 @@ def evaluate_copula_cdf_on_grid(grid, family, **params):
         c_flat = gumbel_cdf(u_flat, v_flat, params["theta"])
     elif family == "gaussian":
         c_flat = gaussian_cdf(u_flat, v_flat, params["rho"])
+    elif family == "student-t":
+        c_flat = student_t_cdf(u_flat, v_flat, params["rho"], params["nu"])
     else:
         raise ValueError(f"Famiglia non supportata per CDF su griglia: {family}")
 
@@ -569,17 +587,20 @@ c_grid_clayton = evaluate_copula_cdf_on_grid(grid_emp, "clayton", theta=copula_c
 c_grid_frank = evaluate_copula_cdf_on_grid(grid_emp, "frank", theta=copula_frank.theta)
 c_grid_gumbel = evaluate_copula_cdf_on_grid(grid_emp, "gumbel", theta=copula_gumbel.theta)
 c_grid_gaussian = evaluate_copula_cdf_on_grid(grid_emp, "gaussian", rho=rho_gauss)
+c_grid_student_t = evaluate_copula_cdf_on_grid(grid_emp, "student-t", rho=rho_t, nu=nu_t)
 
 mse_clayton, dmax_clayton = copula_grid_distance_metrics(c_n_emp, c_grid_clayton)
 mse_frank, dmax_frank = copula_grid_distance_metrics(c_n_emp, c_grid_frank)
 mse_gumbel, dmax_gumbel = copula_grid_distance_metrics(c_n_emp, c_grid_gumbel)
 mse_gaussian, dmax_gaussian = copula_grid_distance_metrics(c_n_emp, c_grid_gaussian)
+mse_student_t, dmax_student_t = copula_grid_distance_metrics(c_n_emp, c_grid_student_t)
 
 print("\n=== Distanza C_n vs C_theta su griglia ===")
 print(f"Clayton - MSE: {mse_clayton:.6f}, Max|Delta|: {dmax_clayton:.6f}")
 print(f"Frank   - MSE: {mse_frank:.6f}, Max|Delta|: {dmax_frank:.6f}")
 print(f"Gumbel  - MSE: {mse_gumbel:.6f}, Max|Delta|: {dmax_gumbel:.6f}")
 print(f"Gaussian- MSE: {mse_gaussian:.6f}, Max|Delta|: {dmax_gaussian:.6f}")
+print(f"Student-t- MSE: {mse_student_t:.6f}, Max|Delta|: {dmax_student_t:.6f}")
 
 # numero osservazioni in data_uv
 n_sim = len(data_uv)
