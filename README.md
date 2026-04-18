@@ -68,9 +68,6 @@ $$c_\theta(u,v) = C_\theta(u,v)\cdot\frac{(xy)^{\theta-1}}{uv}\cdot A^{2/\theta-
 
 **Upper tail dependence:** $\lambda_U = 2 - 2^{1/\theta}$, $\lambda_L = 0$
 
-Code CDF: `x=-log(u); y=-log(v); exp(-((x**theta+y**theta)**(1/theta)))` ✓  
-Code density: `c_val*multiplier*shape_term*correction` with each term matching the formula ✓
-
 ---
 
 #### Gaussian Copula ($\rho \in (-1,1)$, no tail dependence)
