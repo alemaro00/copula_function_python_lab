@@ -737,15 +737,17 @@ density_gumbel = gumbel_density(u, v, copula_gumbel.theta)
 density_gaussian = gaussian_copula_density(u, v, rho_gauss)
 density_student_t = student_t_copula_density(u, v, rho_t, nu_t)
 
-mixture_component_names = ["Clayton", "Frank", "Gumbel"]
+mixture_component_names = ["Clayton", "Frank", "Gumbel", "Gaussian", "Student-t"]
 mixture_density_matrix = np.column_stack([
     density_clayton,
     density_frank,
     density_gumbel,
+    density_gaussian,
+    density_student_t,
 ])
 mixture_weights, ll_mixture = fit_mixture_weights_from_densities(mixture_density_matrix)
 
-print("\nMixture Copula Statica (Clayton + Frank + Gumbel, pesi MLE):")
+print("\nMixture Copula Statica (Clayton + Frank + Gumbel + Gaussian + Student-t, pesi MLE):")
 for name, weight in zip(mixture_component_names, mixture_weights):
     print(f"w_{name}: {weight:.4f}")
 print(f"Somma pesi (controllo): {np.sum(mixture_weights):.6f}")
@@ -786,6 +788,8 @@ p_center_mixture = (
     mixture_weights[0] * p_center_clayton
     + mixture_weights[1] * p_center_frank
     + mixture_weights[2] * p_center_gumbel
+    + mixture_weights[3] * p_center_gaussian
+    + mixture_weights[4] * p_center_student_t
 )
 
 print("\n=== Dipendenza centrale (30%-70%) ===")
@@ -827,6 +831,8 @@ c_grid_mixture = mixture_cdf_on_grid(
         ("clayton", {"theta": copula_clayton.theta}),
         ("frank", {"theta": copula_frank.theta}),
         ("gumbel", {"theta": copula_gumbel.theta}),
+        ("gaussian", {"rho": rho_gauss}),
+        ("student-t", {"rho": rho_t, "nu": nu_t}),
     ],
     mixture_weights,
 )
