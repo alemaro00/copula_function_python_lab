@@ -1,0 +1,200 @@
+Dati scaricati da Yahoo e salvati in cache: prezzi_close_cache.csv
+Il dataframe con GC=F e SI=F è:
+
+ Ticker            GC=F    SI=F
+Date                          
+2007-01-02  635.200012  12.818
+2007-01-03  627.099976  12.555
+2007-01-04  623.900024  12.727
+2007-01-05  604.900024  12.130
+2007-01-08  607.500000  12.260
+
+Numero di righe con almeno un NaN: 0
+Numero totale di celle NaN: 0
+
+Ticker             GC=F       SI=F
+Date                              
+2007-01-02   635.200012  12.818000
+2007-01-03   627.099976  12.555000
+2007-01-04   623.900024  12.727000
+2007-01-05   604.900024  12.130000
+2007-01-08   607.500000  12.260000
+...                 ...        ...
+2026-04-02  4651.500000  72.735001
+2026-04-06  4656.799805  72.661003
+2026-04-07  4657.100098  71.825996
+2026-04-08  4749.500000  75.223999
+2026-04-09  4792.200195  76.277000
+
+[4847 rows x 2 columns]
+
+=== Rendimenti logaritmici ===
+
+Ticker          GC=F      SI=F
+Date                          
+2007-01-03 -0.012834 -0.020731
+2007-01-04 -0.005116  0.013607
+2007-01-05 -0.030927 -0.048044
+2007-01-08  0.004289  0.010660
+2007-01-09  0.009176  0.019227
+...              ...       ...
+2026-04-02 -0.027920 -0.042159
+2026-04-06  0.001139 -0.001018
+2026-04-07  0.000064 -0.011558
+2026-04-08  0.019646  0.046224
+2026-04-09  0.008950  0.013901
+
+[4846 rows x 2 columns]
+
+Test for Normality: Jarque-Bera
+
+GC=F -> p-value: 0.0000
+Distribuzione NON normale
+
+SI=F -> p-value: 0.0000
+Distribuzione NON normale
+
+
+Il quinto percentile di GC=F è: -0.018042418444883128
+Il novantacinquesimo percentile di GC=F è: 0.017481835603319847
+Il quinto percentile di SI=F è: -0.03366778959597419
+Il novantacinquesimo percentile di SI=F è: 0.033177590834945994
+
+Valori sotto il 5° percentile
+         GC=F      SI=F
+0   -0.120657 -0.376103
+1   -0.098206 -0.195457
+2   -0.065976 -0.139389
+3   -0.060963 -0.123854
+4   -0.060255 -0.119594
+..        ...       ...
+238 -0.018112 -0.033787
+239 -0.018102 -0.033778
+240 -0.018094 -0.033723
+241 -0.018052 -0.033708
+242 -0.018046 -0.033673
+
+[243 rows x 2 columns]
+
+Valori sopra il 95° percentile
+         GC=F      SI=F
+0    0.017488  0.033201
+1    0.017505  0.033259
+2    0.017521  0.033292
+3    0.017525  0.033333
+4    0.017531  0.033377
+..        ...       ...
+238  0.055978  0.102215
+239  0.057775  0.104978
+240  0.059054  0.109278
+241  0.075401  0.121958
+242  0.086432  0.131250
+
+[243 rows x 2 columns]
+
+Valori di u [0.09407881 0.23891067 0.01114091 ... 0.47039406 0.96472045 0.82917268]
+
+Valori di v [0.10852073 0.80028884 0.02145657 ... 0.20713844 0.97957499 0.80338354]
+
+Rho di Pearson tra GC=F e SI=F:0.7920
+Tau di Kendall tra GC=F e SI=F: 0.5997
+Rho di Spearman tra GC=F e SI=F: 0.7844
+Lower Tail Dependence (soglia q=0.05): 0.5076
+Upper Tail Dependence (soglia q=0.95): 0.4622
+
+Valori di u e v combinati
+ [[0.09407881 0.10852073]
+ [0.23891067 0.80028884]
+ [0.01114091 0.02145657]
+ ...
+ [0.47039406 0.20713844]
+ [0.96472045 0.97957499]
+ [0.82917268 0.80338354]]
+
+=== Probabilita congiunte empiriche su quantili=== 
+(es. Copula empirica C_n(0.01, 0.01)=P(U<=0.01, V<=0.01) è la probabilita che 
+l'oro sia <= 1% e l'argento sia <= 1% e cosi via. Mentre per P(U>0.99, V>0.99) è la probabilità 
+che l'oro sia > 99% e l'argento sia > 99% e si calcola come 1 - P(U<=0.99) - P(V<=0.99) + C_n(0.99,0.99))
+Copula empirica C_n(0.01, 0.01)=P(U<=0.01, V<=0.01): 0.0052
+P(U>0.01, V>0.01): 0.9853
+Copula empirica C_n(0.05, 0.05)=P(U<=0.05, V<=0.05): 0.0254
+P(U>0.05, V>0.05): 0.9255
+Copula empirica C_n(0.10, 0.10)=P(U<=0.10, V<=0.10): 0.0638
+P(U>0.10, V>0.10): 0.8640
+Copula empirica C_n(0.15, 0.15)=P(U<=0.15, V<=0.15): 0.0986
+P(U>0.15, V>0.15): 0.7986
+Copula empirica C_n(0.85, 0.85)=P(U<=0.85, V<=0.85): 0.7926
+P(U>0.85, V>0.85): 0.0927
+Copula empirica C_n(0.90, 0.90)=P(U<=0.90, V<=0.90): 0.8556
+P(U>0.90, V>0.90): 0.0553
+Copula empirica C_n(0.95, 0.95)=P(U<=0.95, V<=0.95): 0.9232
+P(U>0.95, V>0.95): 0.0231
+Copula empirica C_n(0.99, 0.99)=P(U<=0.99, V<=0.99): 0.9837
+P(U>0.99, V>0.99): 0.0035
+
+=== Confronto code opposte (sinistra vs destra) ===
+C_n(0.01,0.01) = 0.0052  vs  P(U>0.99,V>0.99) = 0.0035  ->  SINISTRA > DESTRA
+C_n(0.05,0.05) = 0.0254  vs  P(U>0.95,V>0.95) = 0.0231  ->  SINISTRA > DESTRA
+C_n(0.10,0.10) = 0.0638  vs  P(U>0.90,V>0.90) = 0.0553  ->  SINISTRA > DESTRA
+C_n(0.15,0.15) = 0.0986  vs  P(U>0.85,V>0.85) = 0.0927  ->  SINISTRA > DESTRA
+
+Clayton Copula:
+Theta: 2.9962
+Lower Tail Dependence: 0.7935
+Upper Tail Dependence: 0.0000
+
+Frank Copula:
+Theta: 7.9215
+Lower Tail Dependence: 0.0000
+Upper Tail Dependence: 0.0000
+
+Gumbel Copula:
+Theta: 2.4981
+Lower Tail Dependence: 0.0000
+Upper Tail Dependence: 0.6802
+
+Gaussian Copula:
+Rho: 0.7986
+Lower Tail Dependence: 0.0000
+Upper Tail Dependence: 0.0000
+
+Student-t Copula:
+Rho: 0.8060
+Nu: 5.4981
+Lower Tail Dependence: 0.4331
+Upper Tail Dependence: 0.4331
+
+Mixture Copula Statica (Clayton + Frank + Gumbel + Gaussian + Student-t, pesi MLE):
+w_Clayton: 0.0637
+w_Frank: 0.0548
+w_Gumbel: 0.0000
+w_Gaussian: 0.0000
+w_Student-t: 0.8815
+Somma pesi (controllo): 1.000000
+
+=== Dipendenza centrale (30%-70%) ===
+Empirica P(0.30<U<=0.70, 0.30<V<=0.70): 0.2480
+Clayton   model: 0.2406, |errore|: 0.0074
+Frank     model: 0.2460, |errore|: 0.0020
+Gumbel    model: 0.2422, |errore|: 0.0059
+Gaussian  model: 0.2325, |errore|: 0.0155
+Student-t model: 0.2434, |errore|: 0.0047
+Mixture   model: 0.2433, |errore|: 0.0047
+
+=== Distanza C_n vs C_theta su griglia ===
+Clayton - MSE: 0.000118, Max|Delta|: 0.032637
+Frank   - MSE: 0.000031, Max|Delta|: 0.019282
+Gumbel  - MSE: 0.000027, Max|Delta|: 0.017789
+Gaussian- MSE: 0.000005, Max|Delta|: 0.009019
+Student-t- MSE: 0.000001, Max|Delta|: 0.005402
+Mixture - MSE: 0.000002, Max|Delta|: 0.005572
+
+=== AIC, BIC e Log-Likelihood (MLE) per ogni copula ===
+Clayton - AIC: -3661.37, BIC: -3654.88, Log-Likelihood MLE: 1831.68
+Frank   - AIC: -4684.65, BIC: -4678.16, Log-Likelihood MLE: 2343.32
+Gumbel  - AIC: -4635.86, BIC: -4629.37, Log-Likelihood MLE: 2318.93
+Gaussian- AIC: -4906.65, BIC: -4900.16, Log-Likelihood MLE: 2454.32
+Student-t- AIC: -5171.36, BIC: -5158.38, Log-Likelihood MLE: 2587.68
+Mixture - AIC: -5179.15, BIC: -5153.21, Log-Likelihood MLE: 2593.58
+
+Output completo salvato in: C:\Users\aless\Desktop\copula_function_python_lab\output\GC=F&SI=F_2007-01-01&2026-04-10.txt

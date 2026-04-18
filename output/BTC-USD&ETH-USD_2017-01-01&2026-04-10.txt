@@ -1,0 +1,200 @@
+Dati scaricati da Yahoo e salvati in cache: prezzi_close_cache.csv
+Il dataframe con BTC-USD e ETH-USD è:
+
+ Ticker          BTC-USD  ETH-USD
+Date                            
+2017-01-01   998.325012      NaN
+2017-01-02  1021.750000      NaN
+2017-01-03  1043.839966      NaN
+2017-01-04  1154.729980      NaN
+2017-01-05  1013.380005      NaN
+
+Numero di righe con almeno un NaN: 312
+Numero totale di celle NaN: 312
+
+Ticker           BTC-USD      ETH-USD
+Date                                 
+2017-11-09   7143.580078   320.884003
+2017-11-10   6618.140137   299.252991
+2017-11-11   6357.600098   314.681000
+2017-11-12   5950.069824   307.907990
+2017-11-13   6559.490234   316.716003
+...                  ...          ...
+2026-04-05  68981.898438  2108.995605
+2026-04-06  68859.828125  2107.761475
+2026-04-07  71940.703125  2241.806641
+2026-04-08  71123.359375  2190.335449
+2026-04-09  71767.828125  2189.144043
+
+[3074 rows x 2 columns]
+
+=== Rendimenti logaritmici ===
+
+Ticker       BTC-USD   ETH-USD
+Date                          
+2017-11-10 -0.076400 -0.069790
+2017-11-11 -0.040163  0.050270
+2017-11-12 -0.066248 -0.021758
+2017-11-13  0.097510  0.028204
+2017-11-14  0.011559  0.063948
+...              ...       ...
+2026-04-05  0.024825  0.020911
+2026-04-06 -0.001771 -0.000585
+2026-04-07  0.043769  0.061656
+2026-04-08 -0.011426 -0.023227
+2026-04-09  0.009020 -0.000544
+
+[3073 rows x 2 columns]
+
+Test for Normality: Jarque-Bera
+
+BTC-USD -> p-value: 0.0000
+Distribuzione NON normale
+
+ETH-USD -> p-value: 0.0000
+Distribuzione NON normale
+
+
+Il quinto percentile di BTC-USD è: -0.05331952212022303
+Il novantacinquesimo percentile di BTC-USD è: 0.05371331955969041
+Il quinto percentile di ETH-USD è: -0.06973642342723764
+Il novantacinquesimo percentile di ETH-USD è: 0.0700338199874258
+
+Valori sotto il 5° percentile
+      BTC-USD   ETH-USD
+0   -0.464730 -0.550732
+1   -0.184582 -0.317459
+2   -0.174053 -0.209000
+3   -0.173982 -0.206860
+4   -0.154890 -0.203831
+..        ...       ...
+149 -0.054299 -0.071035
+150 -0.054050 -0.071008
+151 -0.053970 -0.070780
+152 -0.053916 -0.070300
+153 -0.053457 -0.069790
+
+[154 rows x 2 columns]
+
+Valori sopra il 95° percentile
+      BTC-USD   ETH-USD
+0    0.053774  0.070106
+1    0.053943  0.070110
+2    0.054017  0.070342
+3    0.054102  0.070451
+4    0.054172  0.070984
+..        ...       ...
+149  0.160042  0.176238
+150  0.167104  0.197200
+151  0.171821  0.225649
+152  0.181724  0.230695
+153  0.225119  0.234741
+
+[154 rows x 2 columns]
+
+Valori di u [0.0214704  0.08132726 0.03057905 ... 0.92290176 0.27586207 0.6581002 ]
+
+Valori di v [0.05009759 0.90240729 0.23064411 ... 0.93428757 0.22023422 0.48178269]
+
+Rho di Pearson tra BTC-USD e ETH-USD:0.7950
+Tau di Kendall tra BTC-USD e ETH-USD: 0.6240
+Rho di Spearman tra BTC-USD e ETH-USD: 0.7961
+Lower Tail Dependence (soglia q=0.05): 0.6118
+Upper Tail Dependence (soglia q=0.95): 0.4361
+
+Valori di u e v combinati
+ [[0.0214704  0.05009759]
+ [0.08132726 0.90240729]
+ [0.03057905 0.23064411]
+ ...
+ [0.92290176 0.93428757]
+ [0.27586207 0.22023422]
+ [0.6581002  0.48178269]]
+
+=== Probabilita congiunte empiriche su quantili=== 
+(es. Copula empirica C_n(0.01, 0.01)=P(U<=0.01, V<=0.01) è la probabilita che 
+l'oro sia <= 1% e l'argento sia <= 1% e cosi via. Mentre per P(U>0.99, V>0.99) è la probabilità 
+che l'oro sia > 99% e l'argento sia > 99% e si calcola come 1 - P(U<=0.99) - P(V<=0.99) + C_n(0.99,0.99))
+Copula empirica C_n(0.01, 0.01)=P(U<=0.01, V<=0.01): 0.0055
+P(U>0.01, V>0.01): 0.9860
+Copula empirica C_n(0.05, 0.05)=P(U<=0.05, V<=0.05): 0.0306
+P(U>0.05, V>0.05): 0.9310
+Copula empirica C_n(0.10, 0.10)=P(U<=0.10, V<=0.10): 0.0683
+P(U>0.10, V>0.10): 0.8685
+Copula empirica C_n(0.15, 0.15)=P(U<=0.15, V<=0.15): 0.1116
+P(U>0.15, V>0.15): 0.8116
+Copula empirica C_n(0.85, 0.85)=P(U<=0.85, V<=0.85): 0.7856
+P(U>0.85, V>0.85): 0.0856
+Copula empirica C_n(0.90, 0.90)=P(U<=0.90, V<=0.90): 0.8539
+P(U>0.90, V>0.90): 0.0537
+Copula empirica C_n(0.95, 0.95)=P(U<=0.95, V<=0.95): 0.9222
+P(U>0.95, V>0.95): 0.0218
+Copula empirica C_n(0.99, 0.99)=P(U<=0.99, V<=0.99): 0.9831
+P(U>0.99, V>0.99): 0.0026
+
+=== Confronto code opposte (sinistra vs destra) ===
+C_n(0.01,0.01) = 0.0055  vs  P(U>0.99,V>0.99) = 0.0026  ->  SINISTRA > DESTRA
+C_n(0.05,0.05) = 0.0306  vs  P(U>0.95,V>0.95) = 0.0218  ->  SINISTRA > DESTRA
+C_n(0.10,0.10) = 0.0683  vs  P(U>0.90,V>0.90) = 0.0537  ->  SINISTRA > DESTRA
+C_n(0.15,0.15) = 0.1116  vs  P(U>0.85,V>0.85) = 0.0856  ->  SINISTRA > DESTRA
+
+Clayton Copula:
+Theta: 3.3192
+Lower Tail Dependence: 0.8115
+Upper Tail Dependence: 0.0000
+
+Frank Copula:
+Theta: 8.6076
+Lower Tail Dependence: 0.0000
+Upper Tail Dependence: 0.0000
+
+Gumbel Copula:
+Theta: 2.6596
+Lower Tail Dependence: 0.0000
+Upper Tail Dependence: 0.7023
+
+Gaussian Copula:
+Rho: 0.8034
+Lower Tail Dependence: 0.0000
+Upper Tail Dependence: 0.0000
+
+Student-t Copula:
+Rho: 0.8265
+Nu: 3.0973
+Lower Tail Dependence: 0.5657
+Upper Tail Dependence: 0.5657
+
+Mixture Copula Statica (Clayton + Frank + Gumbel + Gaussian + Student-t, pesi MLE):
+w_Clayton: 0.3318
+w_Frank: 0.0000
+w_Gumbel: 0.0000
+w_Gaussian: 0.0000
+w_Student-t: 0.6682
+Somma pesi (controllo): 1.000000
+
+=== Dipendenza centrale (30%-70%) ===
+Empirica P(0.30<U<=0.70, 0.30<V<=0.70): 0.2662
+Clayton   model: 0.2487, |errore|: 0.0175
+Frank     model: 0.2544, |errore|: 0.0118
+Gumbel    model: 0.2496, |errore|: 0.0166
+Gaussian  model: 0.2341, |errore|: 0.0321
+Student-t model: 0.2562, |errore|: 0.0100
+Mixture   model: 0.2537, |errore|: 0.0125
+
+=== Distanza C_n vs C_theta su griglia ===
+Clayton - MSE: 0.000062, Max|Delta|: 0.025611
+Frank   - MSE: 0.000052, Max|Delta|: 0.024423
+Gumbel  - MSE: 0.000077, Max|Delta|: 0.027134
+Gaussian- MSE: 0.000037, Max|Delta|: 0.022655
+Student-t- MSE: 0.000020, Max|Delta|: 0.016630
+Mixture - MSE: 0.000007, Max|Delta|: 0.008544
+
+=== AIC, BIC e Log-Likelihood (MLE) per ogni copula ===
+Clayton - AIC: -3166.59, BIC: -3160.56, Log-Likelihood MLE: 1584.30
+Frank   - AIC: -3252.86, BIC: -3246.83, Log-Likelihood MLE: 1627.43
+Gumbel  - AIC: -2932.95, BIC: -2926.92, Log-Likelihood MLE: 1467.48
+Gaussian- AIC: -3173.74, BIC: -3167.71, Log-Likelihood MLE: 1587.87
+Student-t- AIC: -3637.77, BIC: -3625.71, Log-Likelihood MLE: 1820.89
+Mixture - AIC: -3751.41, BIC: -3727.29, Log-Likelihood MLE: 1879.71
+
+Output completo salvato in: C:\Users\aless\Desktop\copula_function_python_lab\output\BTC-USD&ETH-USD_2017-01-01&2026-04-10.txt
