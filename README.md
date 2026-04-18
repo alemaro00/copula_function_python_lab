@@ -27,12 +27,8 @@ Marginals are estimated non-parametrically via the empirical CDF using ranks:
 
 $$u_i = \frac{\text{rank}(x_i)}{n+1}, \quad v_i = \frac{\text{rank}(y_i)}{n+1}$$
 
-In the code: `u = rankdata(returns[waahid]) / (len(returns) + 1)` ✓
-
 ### Empirical Copula
 $$C_n(u,v) = \frac{1}{n}\sum_{i=1}^{n} \mathbf{1}(u_i \le u,\; v_i \le v)$$
-
-In the code: `c_n[j, i] = np.mean((u_vals <= uu) & (v_vals <= vv))` ✓
 
 ---
 
@@ -48,9 +44,6 @@ $$c_\theta(u,v) = (1+\theta)\,(uv)^{-1-\theta}\,\bigl(u^{-\theta}+v^{-\theta}-1\
 
 **Lower tail dependence:** $\lambda_L = 2^{-1/\theta}$, $\lambda_U = 0$
 
-Code CDF: `term = u**(-theta) + v**(-theta) - 1; c_val = term**(-1/theta)` ✓  
-Code density: `(1+theta)*(u*v)**(-1-theta)*term**(-2-1/theta)` ✓
-
 ---
 
 #### Frank Copula ($\theta \in \mathbb{R}\setminus\{0\}$, no tail dependence)
@@ -62,9 +55,6 @@ $$C_\theta(u,v) = -\frac{1}{\theta}\ln\!\left(1 + \frac{(e^{-\theta u}-1)(e^{-\t
 $$c_\theta(u,v) = \frac{\theta(1-e^{-\theta})\,e^{-\theta(u+v)}}{\bigl[(1-e^{-\theta})-(1-e^{-\theta u})(1-e^{-\theta v})\bigr]^2}$$
 
 **Tail dependence:** $\lambda_L = \lambda_U = 0$
-
-Code CDF: `-(1/theta)*np.log1p(num/den)` where `num=(exp(-θu)-1)(exp(-θv)-1)`, `den=exp(-θ)-1` ✓  
-Code density: `numerator/(one_minus_exp_theta - one_minus_exp_theta_u*one_minus_exp_theta_v)**2` ✓
 
 ---
 
@@ -95,9 +85,6 @@ $$c_\rho(u,v) = \frac{1}{\sqrt{1-\rho^2}}\exp\!\left(-\frac{\rho^2(x^2+y^2)-2\rh
 
 **Tail dependence:** $\lambda_L = \lambda_U = 0$
 
-Code CDF: `x=norm.ppf(u); y=norm.ppf(v); sc.stats.multivariate_normal.cdf(...)` ✓  
-Code density: `exp(-(rho²(x²+y²)-2ρxy)/(2(1-ρ²)))/sqrt(1-ρ²)` ✓
-
 ---
 
 #### Student-t Copula ($\rho \in (-1,1)$, $\nu > 2$, symmetric tail dependence)
@@ -116,10 +103,6 @@ $$\ln c = \ln\Gamma\!\tfrac{\nu+2}{2} - \ln\Gamma\!\tfrac{\nu}{2} - \ln(\nu\pi) 
 
 **Symmetric tail dependence:**
 $$\lambda_L = \lambda_U = 2\,t_{\nu+1}\!\left(-\sqrt{\frac{(\nu+1)(1-\rho)}{1+\rho}}\right)$$
-
-Code CDF: `x=t.ppf(u,df=nu); y=t.ppf(v,df=nu); sc.stats.multivariate_t.cdf(...)` ✓  
-Code density: `log_const_biv + log_kernel_biv - log_uni_x - log_uni_y` matching log-space formula ✓  
-Code tail dependence: `2*t.cdf(-sqrt(((nu+1)*(1-rho))/(1+rho)), df=nu+1)` ✓
 
 ---
 
@@ -142,8 +125,3 @@ solved via SLSQP (Sequential Least Squares Programming). The parametric componen
 For model comparison, AIC and BIC are computed with $k-1$ free parameters (one weight is determined by the sum constraint):
 
 $$\text{AIC} = 2(k-1) - 2\hat\ell, \qquad \text{BIC} = (k-1)\ln n - 2\hat\ell$$
-
-Code objective: `-copula_log_likelihood(component_densities @ weights)` in `fit_mixture_weights_from_densities` ✓  
-Code constraints: `{"type": "eq", "fun": lambda w: np.sum(w) - 1.0}`, `bounds=[(0,1)]*k` ✓  
-Code AIC/BIC: `calculate_aic_bic(ll_mixture, len(mixture_weights)-1, n_obs)` ✓
-
