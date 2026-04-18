@@ -1,9 +1,6 @@
 import pandas as pd
 import numpy as np
-import copulas as cp
-import sympy as sp
 import statsmodels.api as sm
-from statsmodels.graphics.gofplots import qqplot
 import seaborn as sns
 import matplotlib.pyplot as plt
 import scipy as sc
@@ -11,6 +8,7 @@ import yfinance as yf
 import time
 from pathlib import Path
 from scipy.stats import jarque_bera, rankdata, kendalltau, norm, t
+from scipy.special import gammaln
 from numpy.random import multivariate_normal
 from copulas.bivariate import Clayton, Frank, Gumbel
 
@@ -297,8 +295,11 @@ def gumbel_density(u_vals, v_vals, theta):
 
 
 def copula_log_likelihood(density_values, eps=1e-300):
-    density_clipped = np.clip(density_values, eps, None)
-    return np.sum(np.log(density_clipped))
+    density_array = np.asarray(density_values, dtype=float)
+    # Penalizza valori non finiti o non positivi invece di propagare NaN/inf.
+    density_array = np.where(np.isfinite(density_array), density_array, 0.0)
+    density_clipped = np.clip(density_array, eps, None)
+    return float(np.sum(np.log(density_clipped)))
 
 
 def gaussian_copula_density(u_vals, v_vals, rho):
@@ -323,16 +324,16 @@ def student_t_copula_density(u_vals, v_vals, rho, nu):
     inv_quad = (x ** 2 - 2 * rho * x * y + y ** 2) / det_r
 
     log_const_biv = (
-        sp.log(sp.gamma((nu + 2) / 2))
-        - sp.log(sp.gamma(nu / 2))
-        - sp.log(nu * np.pi)
+        gammaln((nu + 2) / 2)
+        - gammaln(nu / 2)
+        - np.log(nu * np.pi)
         - 0.5 * np.log(det_r)
     )
     log_kernel_biv = -((nu + 2) / 2) * np.log1p(inv_quad / nu)
-    log_biv = float(log_const_biv) + log_kernel_biv
+    log_biv = log_const_biv + log_kernel_biv
 
-    log_uni_x = np.log(t.pdf(x, df=nu))
-    log_uni_y = np.log(t.pdf(y, df=nu))
+    log_uni_x = np.log(np.clip(t.pdf(x, df=nu), 1e-300, None))
+    log_uni_y = np.log(np.clip(t.pdf(y, df=nu), 1e-300, None))
 
     return np.exp(log_biv - log_uni_x - log_uni_y)
 
@@ -352,8 +353,13 @@ def fit_gaussian_copula_mle(u_vals, v_vals):
         bounds=[(-0.99, 0.99)],
         method="L-BFGS-B"
     )
-    rho_hat = float(result.x[0])
-    ll = -float(result.fun)
+    if result.success and np.isfinite(result.fun):
+        rho_hat = float(result.x[0])
+        ll = -float(result.fun)
+    else:
+        rho_hat = float(np.clip(rho0, -0.99, 0.99))
+        ll = copula_log_likelihood(gaussian_copula_density(u_vals, v_vals, rho_hat))
+        print("Warning: ottimizzazione Gaussian non convergente, uso parametro iniziale.")
     return rho_hat, ll
 
 
@@ -373,9 +379,15 @@ def fit_student_t_copula_mle(u_vals, v_vals):
         bounds=[(-0.99, 0.99), (2.01, 200.0)],
         method="L-BFGS-B"
     )
-    rho_hat = float(result.x[0])
-    nu_hat = float(result.x[1])
-    ll = -float(result.fun)
+    if result.success and np.isfinite(result.fun):
+        rho_hat = float(result.x[0])
+        nu_hat = float(result.x[1])
+        ll = -float(result.fun)
+    else:
+        rho_hat = float(np.clip(rho0, -0.99, 0.99))
+        nu_hat = float(np.clip(nu0, 2.01, 200.0))
+        ll = copula_log_likelihood(student_t_copula_density(u_vals, v_vals, rho_hat, nu_hat))
+        print("Warning: ottimizzazione Student-t non convergente, uso parametri iniziali.")
     return rho_hat, nu_hat, ll
 
 
@@ -437,15 +449,15 @@ def download_close_with_cache(tickers, start, end, max_retries=4, base_wait=3):
 df1 = download_close_with_cache([waahid, ithnaan], inizio_periodo, fine_periodo)
 print(f"Il dataframe con {waahid} e {ithnaan} è:\n\n",df1.head())
 
-# Aggiunta della colonna "has_nan"
-df1['has_nan'] = df1.iloc[:,:].isna().any(axis=1).astype(int) #colonna nuova chiamata has_nan per mettere valore 1 se c'è almeno un nan nella riga del dataframe
-# oppure 0 se non ci sono NaN
-count_has_nan=df1.isna().sum().sum() #conta quanti NaN ci sono nel dataframe
-print(f"\nNumero di righe con almeno un NaN: {count_has_nan}\n")
+# Conteggi NaN: righe con almeno un NaN e celle NaN totali
+row_has_nan = df1.isna().any(axis=1)
+rows_with_nan = int(row_has_nan.sum())
+cells_with_nan = int(df1.isna().sum().sum())
+print(f"\nNumero di righe con almeno un NaN: {rows_with_nan}")
+print(f"Numero totale di celle NaN: {cells_with_nan}\n")
 
-data_clean=df1[df1['has_nan'] != 1].copy() #crea nuovo dataframe senza le righe dove la colonna has_nan ha valore 0 cioè tutte
-data_clean.drop('has_nan', axis=1, inplace=True) #droppa la colonna has_nan che ha solo 0
-dfgood= data_clean #NUOVO dataframe
+# Pulizia: rimuove le righe con almeno un NaN
+dfgood = df1.loc[~row_has_nan].copy()
 print(dfgood)
 
 #calcolo rendimenti logaritmici
@@ -592,6 +604,8 @@ if SHOW_SIMULATION_COMPARISON:
 
 # Funzione per calcolare AIC e BIC (classico confronto MLE)
 def calculate_aic_bic(log_likelihood, num_params, n_obs):
+    if not np.isfinite(log_likelihood):
+        return np.nan, np.nan
     aic = 2 * num_params - 2 * log_likelihood
     bic = np.log(n_obs) * num_params - 2 * log_likelihood
     return aic, bic
