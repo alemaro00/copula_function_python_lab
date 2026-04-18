@@ -16,9 +16,9 @@ from numpy.random import multivariate_normal
 from copulas.bivariate import Clayton, Frank, Gumbel
 
 #cambiare qualsiasi commodities, azione, strumento finanziario preso da yahoo finance
-waahid= "GC=F"#"BTC-USD"
-ithnaan=  "SI=F"#"ETH-USD"
-inizio_periodo="2007-01-01"
+waahid= "BTC-USD"#"GC=F"#
+ithnaan=  "ETH-USD"#"SI=F"#
+inizio_periodo="2017-01-01"
 fine_periodo="2026-04-10"
 
 

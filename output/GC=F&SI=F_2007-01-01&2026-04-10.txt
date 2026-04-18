@@ -164,10 +164,12 @@ Nu: 5.4981
 Lower Tail Dependence: 0.4331
 Upper Tail Dependence: 0.4331
 
-Mixture Copula Statica (Clayton + Frank + Gumbel, pesi MLE):
-w_Clayton: 0.3185
-w_Frank: 0.1216
-w_Gumbel: 0.5599
+Mixture Copula Statica (Clayton + Frank + Gumbel + Gaussian + Student-t, pesi MLE):
+w_Clayton: 0.0637
+w_Frank: 0.0548
+w_Gumbel: 0.0000
+w_Gaussian: 0.0000
+w_Student-t: 0.8815
 Somma pesi (controllo): 1.000000
 
 === Dipendenza centrale (30%-70%) ===
@@ -176,16 +178,16 @@ Clayton   model: 0.2406, |errore|: 0.0074
 Frank     model: 0.2460, |errore|: 0.0020
 Gumbel    model: 0.2422, |errore|: 0.0059
 Gaussian  model: 0.2325, |errore|: 0.0155
-Student-t model: 0.2434, |errore|: 0.0046
-Mixture   model: 0.2422, |errore|: 0.0059
+Student-t model: 0.2434, |errore|: 0.0047
+Mixture   model: 0.2433, |errore|: 0.0047
 
 === Distanza C_n vs C_theta su griglia ===
 Clayton - MSE: 0.000118, Max|Delta|: 0.032637
 Frank   - MSE: 0.000031, Max|Delta|: 0.019282
 Gumbel  - MSE: 0.000027, Max|Delta|: 0.017789
 Gaussian- MSE: 0.000005, Max|Delta|: 0.009019
-Student-t- MSE: 0.000001, Max|Delta|: 0.005391
-Mixture - MSE: 0.000005, Max|Delta|: 0.007756
+Student-t- MSE: 0.000001, Max|Delta|: 0.005402
+Mixture - MSE: 0.000002, Max|Delta|: 0.005572
 
 === AIC, BIC e Log-Likelihood (MLE) per ogni copula ===
 Clayton - AIC: -3661.37, BIC: -3654.88, Log-Likelihood MLE: 1831.68
@@ -193,6 +195,6 @@ Frank   - AIC: -4684.65, BIC: -4678.16, Log-Likelihood MLE: 2343.32
 Gumbel  - AIC: -4635.86, BIC: -4629.37, Log-Likelihood MLE: 2318.93
 Gaussian- AIC: -4906.65, BIC: -4900.16, Log-Likelihood MLE: 2454.32
 Student-t- AIC: -5171.36, BIC: -5158.38, Log-Likelihood MLE: 2587.68
-Mixture - AIC: -5040.75, BIC: -5027.78, Log-Likelihood MLE: 2522.37
+Mixture - AIC: -5179.15, BIC: -5153.21, Log-Likelihood MLE: 2593.58
 
 Output completo salvato in: C:\Users\aless\Desktop\copula_function_python_lab\output\GC=F&SI=F_2007-01-01&2026-04-10.txt
