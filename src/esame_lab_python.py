@@ -544,8 +544,41 @@ print("\nValori di u e v combinati\n", data_uv)
 grid_emp, c_n_emp = build_empirical_copula_grid(u, v, grid_size=60)
 if SHOW_EMPIRICAL_SCATTER:
     plot_empirical_copula(u, v, title="Pseudo-osservazioni (u,v) nel quadrato unitario - Oro/Argento")
-print(f"\nCopula empirica C_n(0.05, 0.05): {np.mean((u <= 0.05) & (v <= 0.05)):.4f}")
-print(f"Copula empirica C_n(0.95, 0.95): {np.mean((u <= 0.95) & (v <= 0.95)):.4f}")
+
+levels = [0.01, 0.05, 0.10, 0.15, 0.85, 0.90, 0.95, 0.99]
+print("\n=== Probabilita congiunte empiriche su quantili=== \n(es. Copula empirica C_n(0.01, 0.01)=P(U<=0.01, V<=0.01) è la probabilita che \nl'oro sia <= 1% e l'argento sia <= 1% e cosi via. Mentre per P(U>0.99, V>0.99) è la probabilità \nche l'oro sia > 99% e l'argento sia > 99% e si calcola come 1 - P(U<=0.99) - P(V<=0.99) + C_n(0.99,0.99))")
+for q in levels:
+    q_pct = int(round(q * 100))
+    p_u_le_q = np.mean(u <= q)
+    p_v_le_q = np.mean(v <= q)
+    c_q = np.mean((u <= q) & (v <= q))
+    # Formula complementare: P(U>q, V>q) = 1 - P(U<=q) - P(V<=q) + C_n(q,q)
+    p_joint_upper_formula = 1 - p_u_le_q - p_v_le_q + c_q
+    p_joint_upper_direct = np.mean((u > q) & (v > q))
+
+    print(f"Copula empirica C_n({q:.2f}, {q:.2f})=P(U<={q:.2f}, V<={q:.2f}): {c_q:.4f}")
+    print(f"P(U>{q:.2f}, V>{q:.2f}): {p_joint_upper_direct:.4f}")
+
+print("\n=== Confronto code opposte (sinistra vs destra) ===")
+for q_left in [0.01, 0.05, 0.10, 0.15]:
+    q_right = 1 - q_left
+    c_left = np.mean((u <= q_left) & (v <= q_left))
+    c_right = np.mean((u <= q_right) & (v <= q_right))
+    p_u_le_right = np.mean(u <= q_right)
+    p_v_le_right = np.mean(v <= q_right)
+    p_joint_right = 1 - p_u_le_right - p_v_le_right + c_right
+
+    if c_left > p_joint_right:
+        verdict = "SINISTRA > DESTRA"
+    elif c_left < p_joint_right:
+        verdict = "SINISTRA < DESTRA"
+    else:
+        verdict = "SINISTRA = DESTRA"
+
+    print(
+        f"C_n({q_left:.2f},{q_left:.2f}) = {c_left:.4f}  vs  "
+        f"P(U>{q_right:.2f},V>{q_right:.2f}) = {p_joint_right:.4f}  ->  {verdict}"
+    )
 
 # Stima delle copule
 copula_clayton = Clayton()
