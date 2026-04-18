@@ -188,8 +188,11 @@ def plot_empirical_copula(u_vals, v_vals, title="Copula empirica C_n(u,v)"):
 def clayton_cdf(u_vals, v_vals, theta):
     if theta <= 0:
         return np.full_like(u_vals, np.nan, dtype=float)
+    eps = 1e-12
+    u_safe = np.clip(u_vals, eps, 1)
+    v_safe = np.clip(v_vals, eps, 1)
     with np.errstate(over="ignore", invalid="ignore"):
-        term = u_vals ** (-theta) + v_vals ** (-theta) - 1
+        term = u_safe ** (-theta) + v_safe ** (-theta) - 1
         c_val = term ** (-1 / theta)
     return np.clip(c_val, 0, 1)
 

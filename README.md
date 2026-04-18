@@ -1,3 +1,6 @@
 # copula_function_python_lab
 
-This repository's goal is to understand the copula functions to keep the non linear dependency, during the time, of two or more economic variables.
+The goal of this repository is to understand the copula functions to keep the non linear dependency, during extreme events, of two or more economic variables.
+
+In this code it is possibile to see how Gold and Silver are well correlated during extreme events.
+T-Student copula is the best copula can descrive the symmetric dependency, for example, when Gold is subject to an extreme change (positive or negative), there is an high probability silver changes with it, in the same direction.
