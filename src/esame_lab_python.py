@@ -279,6 +279,44 @@ def copula_grid_distance_metrics(c_empirical, c_parametric):
     return mse, max_abs
 
 
+def fit_mixture_weights_from_densities(component_densities):
+    n_components = component_densities.shape[1]
+    w0 = np.full(n_components, 1.0 / n_components)
+
+    def objective(weights):
+        mix_density = component_densities @ weights
+        return -copula_log_likelihood(mix_density)
+
+    constraints = [{"type": "eq", "fun": lambda w: np.sum(w) - 1.0}]
+    bounds = [(0.0, 1.0)] * n_components
+
+    result = sc.optimize.minimize(
+        objective,
+        x0=w0,
+        method="SLSQP",
+        bounds=bounds,
+        constraints=constraints
+    )
+
+    if result.success and np.all(np.isfinite(result.x)):
+        weights = np.clip(result.x, 0.0, 1.0)
+        weights = weights / np.sum(weights)
+        ll = -float(result.fun)
+    else:
+        weights = w0
+        ll = copula_log_likelihood(component_densities @ weights)
+        print("Warning: ottimizzazione mixture non convergente, uso pesi uniformi.")
+
+    return weights, ll
+
+
+def mixture_cdf_on_grid(grid, component_specs, weights):
+    c_mix = np.zeros((len(grid), len(grid)), dtype=float)
+    for w, (family, params) in zip(weights, component_specs):
+        c_mix += w * evaluate_copula_cdf_on_grid(grid, family, **params)
+    return np.clip(c_mix, 0, 1)
+
+
 def clayton_density(u_vals, v_vals, theta):
     if theta <= 0:
         return np.full_like(u_vals, np.nan, dtype=float)
@@ -615,6 +653,27 @@ rho_t, nu_t, ll_t_mle = fit_student_t_copula_mle(u, v)
 lambda_t = 2 * t.cdf(-np.sqrt(((nu_t + 1) * (1 - rho_t)) / (1 + rho_t)), df=nu_t + 1)
 print(f"\nStudent-t Copula:\nRho: {rho_t:.4f}\nNu: {nu_t:.4f}\nLower Tail Dependence: {lambda_t:.4f}\nUpper Tail Dependence: {lambda_t:.4f}")
 
+# Mixture copula statica: combina copule stimate con pesi non negativi che sommano a 1.
+density_clayton = clayton_density(u, v, copula_clayton.theta)
+density_frank = frank_density(u, v, copula_frank.theta)
+density_gumbel = gumbel_density(u, v, copula_gumbel.theta)
+density_gaussian = gaussian_copula_density(u, v, rho_gauss)
+density_student_t = student_t_copula_density(u, v, rho_t, nu_t)
+
+mixture_component_names = ["Clayton", "Frank", "Gumbel"]
+mixture_density_matrix = np.column_stack([
+    density_clayton,
+    density_frank,
+    density_gumbel,
+])
+mixture_weights, ll_mixture = fit_mixture_weights_from_densities(mixture_density_matrix)
+
+print("\nMixture Copula Statica (Clayton + Frank + Gumbel, pesi MLE):")
+for name, weight in zip(mixture_component_names, mixture_weights):
+    print(f"w_{name}: {weight:.4f}")
+print(f"Somma pesi (controllo): {np.sum(mixture_weights):.6f}")
+dominant_idx = int(np.argmax(mixture_weights))
+
 # Verifica dipendenza nella zona centrale: [30%, 70%] x [30%, 70%]
 center_low, center_high = 0.30, 0.70
 p_emp_center = np.mean(
@@ -646,6 +705,11 @@ p_center_gaussian = rectangle_prob_from_cdf(
 p_center_student_t = rectangle_prob_from_cdf(
     student_t_cdf, center_low, center_high, rho=rho_t, nu=nu_t
 )
+p_center_mixture = (
+    mixture_weights[0] * p_center_clayton
+    + mixture_weights[1] * p_center_frank
+    + mixture_weights[2] * p_center_gumbel
+)
 
 print("\n=== Dipendenza centrale (30%-70%) ===")
 print(f"Empirica P(0.30<U<=0.70, 0.30<V<=0.70): {p_emp_center:.4f}")
@@ -669,6 +733,10 @@ print(
     f"Student-t model: {p_center_student_t:.4f}, "
     f"|errore|: {abs(p_emp_center - p_center_student_t):.4f}"
 )
+print(
+    f"Mixture   model: {p_center_mixture:.4f}, "
+    f"|errore|: {abs(p_emp_center - p_center_mixture):.4f}"
+)
 
 # Confronto diretto C_n(u,v) vs C_theta(u,v) su griglia (Cramer-von Mises discreto + distanza sup)
 c_grid_clayton = evaluate_copula_cdf_on_grid(grid_emp, "clayton", theta=copula_clayton.theta)
@@ -676,12 +744,22 @@ c_grid_frank = evaluate_copula_cdf_on_grid(grid_emp, "frank", theta=copula_frank
 c_grid_gumbel = evaluate_copula_cdf_on_grid(grid_emp, "gumbel", theta=copula_gumbel.theta)
 c_grid_gaussian = evaluate_copula_cdf_on_grid(grid_emp, "gaussian", rho=rho_gauss)
 c_grid_student_t = evaluate_copula_cdf_on_grid(grid_emp, "student-t", rho=rho_t, nu=nu_t)
+c_grid_mixture = mixture_cdf_on_grid(
+    grid_emp,
+    [
+        ("clayton", {"theta": copula_clayton.theta}),
+        ("frank", {"theta": copula_frank.theta}),
+        ("gumbel", {"theta": copula_gumbel.theta}),
+    ],
+    mixture_weights,
+)
 
 mse_clayton, dmax_clayton = copula_grid_distance_metrics(c_n_emp, c_grid_clayton)
 mse_frank, dmax_frank = copula_grid_distance_metrics(c_n_emp, c_grid_frank)
 mse_gumbel, dmax_gumbel = copula_grid_distance_metrics(c_n_emp, c_grid_gumbel)
 mse_gaussian, dmax_gaussian = copula_grid_distance_metrics(c_n_emp, c_grid_gaussian)
 mse_student_t, dmax_student_t = copula_grid_distance_metrics(c_n_emp, c_grid_student_t)
+mse_mixture, dmax_mixture = copula_grid_distance_metrics(c_n_emp, c_grid_mixture)
 
 print("\n=== Distanza C_n vs C_theta su griglia ===")
 print(f"Clayton - MSE: {mse_clayton:.6f}, Max|Delta|: {dmax_clayton:.6f}")
@@ -689,6 +767,7 @@ print(f"Frank   - MSE: {mse_frank:.6f}, Max|Delta|: {dmax_frank:.6f}")
 print(f"Gumbel  - MSE: {mse_gumbel:.6f}, Max|Delta|: {dmax_gumbel:.6f}")
 print(f"Gaussian- MSE: {mse_gaussian:.6f}, Max|Delta|: {dmax_gaussian:.6f}")
 print(f"Student-t- MSE: {mse_student_t:.6f}, Max|Delta|: {dmax_student_t:.6f}")
+print(f"Mixture - MSE: {mse_mixture:.6f}, Max|Delta|: {dmax_mixture:.6f}")
 
 # numero osservazioni in data_uv
 n_sim = len(data_uv)
@@ -726,12 +805,6 @@ def calculate_aic_bic(log_likelihood, num_params, n_obs):
 num_params = 1
 n_obs = len(u)
 
-density_clayton = clayton_density(u, v, copula_clayton.theta)
-density_frank = frank_density(u, v, copula_frank.theta)
-density_gumbel = gumbel_density(u, v, copula_gumbel.theta)
-density_gaussian = gaussian_copula_density(u, v, rho_gauss)
-density_student_t = student_t_copula_density(u, v, rho_t, nu_t)
-
 ll_clayton = copula_log_likelihood(density_clayton)
 ll_frank = copula_log_likelihood(density_frank)
 ll_gumbel = copula_log_likelihood(density_gumbel)
@@ -744,6 +817,8 @@ aic_frank, bic_frank = calculate_aic_bic(ll_frank, num_params, n_obs)
 aic_gumbel, bic_gumbel = calculate_aic_bic(ll_gumbel, num_params, n_obs)
 aic_gaussian, bic_gaussian = calculate_aic_bic(ll_gaussian, 1, n_obs)
 aic_student_t, bic_student_t = calculate_aic_bic(ll_student_t, 2, n_obs)
+# Condizionale ai parametri delle componenti gia' stimati: k = (#pesi - 1).
+aic_mixture, bic_mixture = calculate_aic_bic(ll_mixture, len(mixture_weights) - 1, n_obs)
 
 # Stampa dei risultati
 print("\n=== AIC, BIC e Log-Likelihood (MLE) per ogni copula ===")
@@ -752,5 +827,6 @@ print(f"Frank   - AIC: {aic_frank:.2f}, BIC: {bic_frank:.2f}, Log-Likelihood MLE
 print(f"Gumbel  - AIC: {aic_gumbel:.2f}, BIC: {bic_gumbel:.2f}, Log-Likelihood MLE: {ll_gumbel:.2f}")
 print(f"Gaussian- AIC: {aic_gaussian:.2f}, BIC: {bic_gaussian:.2f}, Log-Likelihood MLE: {ll_gaussian:.2f}")
 print(f"Student-t- AIC: {aic_student_t:.2f}, BIC: {bic_student_t:.2f}, Log-Likelihood MLE: {ll_student_t:.2f}")
+print(f"Mixture - AIC: {aic_mixture:.2f}, BIC: {bic_mixture:.2f}, Log-Likelihood MLE: {ll_mixture:.2f}")
 
 #creare una copula per osservare la dipendenza nelle code superiori tra oro, argento e vix
