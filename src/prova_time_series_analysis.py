@@ -1,8 +1,13 @@
 import time
+import re
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
+import plotly.graph_objects as go
 import scipy.stats as stats
 import yfinance as yf
+from plotly.subplots import make_subplots
 
 # Cambiare qualsiasi commodity, azione o strumento finanziario preso da Yahoo Finance.
 waahid = "GC=F"  # "BTC-USD"
@@ -167,6 +172,104 @@ def print_report(name: str, ticker: str, returns: pd.Series) -> None:
 	print(f"Jarque-Bera normalita'   : JB={tests['jb']:.6f}, p-value={tests['jb_p']:.6g}")
 
 
+def _safe_token(value: str) -> str:
+	"""Rende una stringa sicura per essere usata nel nome file."""
+	return re.sub(r"[^A-Za-z0-9._-]+", "_", value)
+
+
+def plot_report(name: str, ticker: str, prices: pd.Series, returns: pd.Series) -> Path:
+	"""Crea un dashboard HTML con distribuzione e grafici diagnostici."""
+	out_dir = Path("output") / "plots"
+	out_dir.mkdir(parents=True, exist_ok=True)
+
+	fig = make_subplots(
+		rows=2,
+		cols=2,
+		subplot_titles=(
+			"Prezzo nel tempo",
+			"Distribuzione rendimenti (%)",
+			"Boxplot rendimenti (%)",
+			"Q-Q plot (normalita')",
+		),
+	)
+
+	fig.add_trace(
+		go.Scatter(x=prices.index, y=prices.values, mode="lines", name="Prezzo"),
+		row=1,
+		col=1,
+	)
+
+	ret_vals = returns.to_numpy(dtype=float)
+	fig.add_trace(
+		go.Histogram(
+			x=ret_vals,
+			nbinsx=80,
+			histnorm="probability density",
+			name="Istogramma",
+			opacity=0.65,
+		),
+		row=1,
+		col=2,
+	)
+
+	if returns.nunique() > 1:
+		kde = stats.gaussian_kde(ret_vals)
+		x_grid = np.linspace(ret_vals.min(), ret_vals.max(), 300)
+		fig.add_trace(
+			go.Scatter(x=x_grid, y=kde(x_grid), mode="lines", name="KDE"),
+			row=1,
+			col=2,
+		)
+
+	fig.add_trace(
+		go.Box(y=ret_vals, name="Rendimenti", boxmean=True),
+		row=2,
+		col=1,
+	)
+
+	theo_q, samp_q = stats.probplot(ret_vals, dist="norm", fit=False)
+	fig.add_trace(
+		go.Scatter(x=theo_q, y=samp_q, mode="markers", name="Q-Q"),
+		row=2,
+		col=2,
+	)
+
+	qq_min = min(np.min(theo_q), np.min(samp_q))
+	qq_max = max(np.max(theo_q), np.max(samp_q))
+	fig.add_trace(
+		go.Scatter(
+			x=[qq_min, qq_max],
+			y=[qq_min, qq_max],
+			mode="lines",
+			name="Linea 45deg",
+			line=dict(dash="dash"),
+		),
+		row=2,
+		col=2,
+	)
+
+	fig.update_xaxes(title_text="Data", row=1, col=1)
+	fig.update_yaxes(title_text="Prezzo", row=1, col=1)
+	fig.update_xaxes(title_text="Rendimento %", row=1, col=2)
+	fig.update_yaxes(title_text="Densita'", row=1, col=2)
+	fig.update_yaxes(title_text="Rendimento %", row=2, col=1)
+	fig.update_xaxes(title_text="Quantili teorici", row=2, col=2)
+	fig.update_yaxes(title_text="Quantili campionari", row=2, col=2)
+
+	fig.update_layout(
+		title=f"{name} ({ticker}) - Analisi grafica",
+		template="plotly_white",
+		height=850,
+		width=1300,
+		legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1.0),
+	)
+
+	file_name = f"{_safe_token(name)}_{_safe_token(ticker)}_dashboard.html"
+	out_path = out_dir / file_name
+	fig.write_html(out_path, include_plotlyjs="cdn")
+	return out_path
+
+
 def main() -> None:
 	tickers = {"waahid": waahid, "ithnaan": ithnaan}
 
@@ -181,6 +284,8 @@ def main() -> None:
 			continue
 
 		print_report(name, ticker, simple_returns)
+		plot_path = plot_report(name, ticker, prices, simple_returns)
+		print(f"Grafico salvato in: {plot_path}")
 
 
 if __name__ == "__main__":
