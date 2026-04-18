@@ -129,11 +129,21 @@ A mixture copula is a convex combination of copula densities:
 
 $$C_{mix}(u,v) = \sum_{j=1}^{k} w_j\, C_j(u,v), \quad w_j \ge 0,\; \sum_{j=1}^{k} w_j = 1$$
 
-The weights $\mathbf{w}=(w_1,\ldots,w_k)$ are estimated by maximising the log-likelihood:
+The weights $\mathbf{w}=(w_1,\ldots,w_k)$ are estimated by maximising the mixture log-likelihood function:
 
-$$\hat{\mathbf{w}} = \arg\max_{\mathbf{w}} \sum_{i=1}^{n} \ln\!\left(\sum_{j=1}^{k} w_j\, c_j(u_i,v_i)\right)$$
+$$\ell(\mathbf{w}) = \sum_{i=1}^{n} \ln\!\left(\sum_{j=1}^{k} w_j\, c_j(u_i,v_i)\right)$$
 
-subject to $w_j \ge 0$ and $\sum_j w_j = 1$, solved via SLSQP. The parametric component parameters ($\theta$, $\rho$, $\nu$) are held fixed at their individual MLE estimates; only the $k-1$ free weights are optimised.
+Because numerical optimisers minimise, the code solves the equivalent minimisation:
 
-Code: `mixture_density_matrix @ weights` inside `fit_mixture_weights_from_densities`, `sc.optimize.minimize(..., method="SLSQP")` ✓
+$$\hat{\mathbf{w}} = \arg\min_{\mathbf{w}}\; -\ell(\mathbf{w}) \quad \text{subject to } w_j \ge 0,\; \sum_{j=1}^{k} w_j = 1$$
+
+solved via SLSQP (Sequential Least Squares Programming). The parametric component parameters ($\theta$, $\rho$, $\nu$) are held fixed at their individual MLE estimates; only the $k-1$ free weights are optimised.
+
+For model comparison, AIC and BIC are computed with $k-1$ free parameters (one weight is determined by the sum constraint):
+
+$$\text{AIC} = 2(k-1) - 2\hat\ell, \qquad \text{BIC} = (k-1)\ln n - 2\hat\ell$$
+
+Code objective: `-copula_log_likelihood(component_densities @ weights)` in `fit_mixture_weights_from_densities` ✓  
+Code constraints: `{"type": "eq", "fun": lambda w: np.sum(w) - 1.0}`, `bounds=[(0,1)]*k` ✓  
+Code AIC/BIC: `calculate_aic_bic(ll_mixture, len(mixture_weights)-1, n_obs)` ✓
 
