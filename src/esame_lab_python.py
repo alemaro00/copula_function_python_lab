@@ -709,7 +709,7 @@ print("\nValori di u e v combinati\n", data_uv)
 grid_emp, c_n_emp = build_empirical_copula_grid(u, v, grid_size=60)
 if SHOW_EMPIRICAL_SCATTER:
     plot_empirical_copula(u, v, title=f"Pseudo-osservazioni (u,v) nel quadrato unitario - {waahid} / {ithnaan}")
-if SHOW_EMPIRICAL_CONDITIONAL_CURVE:
+if SHOW_EMPIRICAL_CONDITIONAL_CURVE: # pyright: ignore[reportUndefinedVariable]
     plot_conditional_mean_empirical_copula(u, v, bandwidth=0.05)
 
 levels = [0.01, 0.05, 0.10, 0.15, 0.85, 0.90, 0.95, 0.99]
