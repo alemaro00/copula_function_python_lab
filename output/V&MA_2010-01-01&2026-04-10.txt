@@ -3,22 +3,22 @@ Il dataframe con V e MA è:
 
  Ticker              V         MA
 Date                            
-2010-01-04  19.605230  23.542093
-2010-01-05  19.380573  23.472433
-2010-01-06  19.120327  23.438503
-2010-01-07  19.298275  23.285339
-2010-01-08  19.351654  23.293591
+2010-01-04  19.605221  23.542095
+2010-01-05  19.380566  23.472433
+2010-01-06  19.120323  23.438498
+2010-01-07  19.298271  23.285334
+2010-01-08  19.351652  23.293592
 
 Numero di righe con almeno un NaN: 0
 Numero totale di celle NaN: 0
 
 Ticker               V          MA
 Date                              
-2010-01-04   19.605230   23.542093
-2010-01-05   19.380573   23.472433
-2010-01-06   19.120327   23.438503
-2010-01-07   19.298275   23.285339
-2010-01-08   19.351654   23.293591
+2010-01-04   19.605221   23.542095
+2010-01-05   19.380566   23.472433
+2010-01-06   19.120323   23.438498
+2010-01-07   19.298271   23.285334
+2010-01-08   19.351652   23.293592
 ...                ...         ...
 2026-04-02  300.799988  492.593475
 2026-04-06  303.329987  500.639648
@@ -35,8 +35,8 @@ Date
 2010-01-05 -0.011525 -0.002963
 2010-01-06 -0.013519 -0.001447
 2010-01-07  0.009264 -0.006556
-2010-01-08  0.002762  0.000354
-2010-01-11 -0.002878 -0.016595
+2010-01-08  0.002762  0.000355
+2010-01-11 -0.002877 -0.016595
 ...              ...       ...
 2026-04-02  0.007642  0.003634
 2026-04-06  0.008376  0.016202
@@ -55,46 +55,46 @@ MA -> p-value: 0.0000
 Distribuzione NON normale
 
 
-Il quinto percentile di V è: -0.023380920253881634
-Il novantacinquesimo percentile di V è: 0.02216711260988085
-Il quinto percentile di MA è: -0.02577749025479113
-Il novantacinquesimo percentile di MA è: 0.025410416238604062
+Il quinto percentile di V è: -0.02338085806754018
+Il novantacinquesimo percentile di V è: 0.02216702820816536
+Il quinto percentile di MA è: -0.025777714485275487
+Il novantacinquesimo percentile di MA è: 0.025410255497326957
 
 Valori sotto il 5° percentile
             V        MA
-0   -0.145572 -0.136111
+0   -0.145571 -0.136111
 1   -0.135501 -0.111935
-2   -0.104027 -0.110663
-3   -0.080532 -0.108969
+2   -0.104026 -0.110663
+3   -0.080531 -0.108969
 4   -0.078534 -0.108561
 ..        ...       ...
 200 -0.023555 -0.026128
 201 -0.023469 -0.026111
 202 -0.023466 -0.026016
-203 -0.023438 -0.025884
+203 -0.023438 -0.025885
 204 -0.023392 -0.025826
 
 [205 rows x 2 columns]
 
 Valori sopra il 95° percentile
             V        MA
-0    0.022199  0.025429
+0    0.022199  0.025428
 1    0.022222  0.025497
-2    0.022232  0.025519
+2    0.022232  0.025518
 3    0.022251  0.025522
 4    0.022267  0.025531
 ..        ...       ...
 200  0.097527  0.107156
-201  0.100742  0.111590
+201  0.100742  0.111589
 202  0.109606  0.115084
-203  0.129647  0.125700
-204  0.139738  0.153673
+203  0.129647  0.125699
+204  0.139739  0.153673
 
 [205 rows x 2 columns]
 
-Valori di u [0.15570765 0.12173063 0.7731606  ... 0.36861403 0.939868   0.38132486]
+Valori di u [0.15570765 0.12173063 0.7731606  ... 0.36861403 0.939868   0.38108042]
 
-Valori di v [0.35296993 0.404791   0.26326082 ... 0.26570521 0.89806893 0.29039355]
+Valori di v [0.35321437 0.404791   0.26326082 ... 0.26570521 0.89806893 0.29039355]
 
 Rho di Pearson tra V e MA:0.8510
 Tau di Kendall tra V e MA: 0.6400
@@ -103,13 +103,13 @@ Lower Tail Dependence (soglia q=0.05): 0.6455
 Upper Tail Dependence (soglia q=0.95): 0.5868
 
 Valori di u e v combinati
- [[0.15570765 0.35296993]
+ [[0.15570765 0.35321437]
  [0.12173063 0.404791  ]
  [0.7731606  0.26326082]
  ...
  [0.36861403 0.26570521]
  [0.939868   0.89806893]
- [0.38132486 0.29039355]]
+ [0.38108042 0.29039355]]
 
 === Probabilita congiunte empiriche su quantili=== 
 (es. Copula empirica C_n(0.01, 0.01)=P(U<=0.01, V<=0.01) è la probabilita che 
@@ -160,7 +160,7 @@ Upper Tail Dependence: 0.0000
 
 Student-t Copula:
 Rho: 0.8448
-Nu: 3.4883
+Nu: 3.4884
 Lower Tail Dependence: 0.5687
 Upper Tail Dependence: 0.5687
 
@@ -178,23 +178,23 @@ Clayton   model: 0.2543, |errore|: 0.0068
 Frank     model: 0.2602, |errore|: 0.0010
 Gumbel    model: 0.2547, |errore|: 0.0065
 Gaussian  model: 0.2474, |errore|: 0.0137
-Student-t model: 0.2608, |errore|: 0.0003
-Mixture   model: 0.2602, |errore|: 0.0009
+Student-t model: 0.2607, |errore|: 0.0004
+Mixture   model: 0.2601, |errore|: 0.0010
 
 === Distanza C_n vs C_theta su griglia ===
-Clayton - MSE: 0.000086, Max|Delta|: 0.032202
+Clayton - MSE: 0.000086, Max|Delta|: 0.032203
 Frank   - MSE: 0.000044, Max|Delta|: 0.020946
-Gumbel  - MSE: 0.000039, Max|Delta|: 0.023000
+Gumbel  - MSE: 0.000039, Max|Delta|: 0.023001
 Gaussian- MSE: 0.000008, Max|Delta|: 0.013266
-Student-t- MSE: 0.000004, Max|Delta|: 0.009392
-Mixture - MSE: 0.000002, Max|Delta|: 0.007249
+Student-t- MSE: 0.000004, Max|Delta|: 0.009356
+Mixture - MSE: 0.000002, Max|Delta|: 0.007214
 
 === AIC, BIC e Log-Likelihood (MLE) per ogni copula ===
-Clayton - AIC: -4029.30, BIC: -4022.99, Log-Likelihood MLE: 2015.65
-Frank   - AIC: -4625.86, BIC: -4619.55, Log-Likelihood MLE: 2313.93
-Gumbel  - AIC: -4911.08, BIC: -4904.76, Log-Likelihood MLE: 2456.54
-Gaussian- AIC: -4993.01, BIC: -4986.69, Log-Likelihood MLE: 2497.50
-Student-t- AIC: -5378.75, BIC: -5366.12, Log-Likelihood MLE: 2691.37
-Mixture - AIC: -5387.37, BIC: -5362.10, Log-Likelihood MLE: 2697.68
+Clayton - AIC: -4029.26, BIC: -4022.94, Log-Likelihood MLE: 2015.63
+Frank   - AIC: -4625.85, BIC: -4619.53, Log-Likelihood MLE: 2313.92
+Gumbel  - AIC: -4911.09, BIC: -4904.77, Log-Likelihood MLE: 2456.54
+Gaussian- AIC: -4993.02, BIC: -4986.70, Log-Likelihood MLE: 2497.51
+Student-t- AIC: -5378.73, BIC: -5366.10, Log-Likelihood MLE: 2691.36
+Mixture - AIC: -5387.35, BIC: -5362.08, Log-Likelihood MLE: 2697.67
 
 Output completo salvato in: C:\Users\aless\Desktop\copula_function_python_lab\output\V&MA_2010-01-01&2026-04-10.txt
