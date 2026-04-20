@@ -1,0 +1,202 @@
+Dati scaricati da Yahoo e salvati in cache: prezzi_close_cache.csv
+Il dataframe con NG=F e CL=F è:
+
+ Ticker       NG=F       CL=F
+Date                        
+2010-01-04  5.884  81.510002
+2010-01-05  5.637  81.769997
+2010-01-06  6.009  83.180000
+2010-01-07  5.806  82.660004
+2010-01-08  5.749  82.750000
+
+Numero di righe con almeno un NaN: 1
+Numero totale di celle NaN: 1
+
+Ticker       NG=F        CL=F
+Date                         
+2010-01-04  5.884   81.510002
+2010-01-05  5.637   81.769997
+2010-01-06  6.009   83.180000
+2010-01-07  5.806   82.660004
+2010-01-08  5.749   82.750000
+...           ...         ...
+2026-04-02  2.800  111.540001
+2026-04-06  2.811  112.410004
+2026-04-07  2.870  112.949997
+2026-04-08  2.724   94.410004
+2026-04-09  2.670   97.870003
+
+[4091 rows x 2 columns]
+C:\Users\aless\Desktop\copula_function_python_lab\.venv\Lib\site-packages\pandas\core\internals\blocks.py:347: RuntimeWarning: invalid value encountered in log
+  result = func(self.values, **kwargs)
+
+=== Rendimenti logaritmici ===
+
+Ticker          NG=F      CL=F
+Date                          
+2010-01-05 -0.042885  0.003185
+2010-01-06  0.063906  0.017097
+2010-01-07 -0.034366 -0.006271
+2010-01-08 -0.009866  0.001088
+2010-01-11 -0.052677 -0.002783
+...              ...       ...
+2026-04-02 -0.006763  0.108014
+2026-04-06  0.003921  0.007770
+2026-04-07  0.020772  0.004792
+2026-04-08 -0.052211 -0.179298
+2026-04-09 -0.020023  0.035993
+
+[4088 rows x 2 columns]
+
+Test for Normality: Jarque-Bera
+
+NG=F -> p-value: 0.0000
+Distribuzione NON normale
+
+CL=F -> p-value: 0.0000
+Distribuzione NON normale
+
+
+Il quinto percentile di NG=F è: -0.05596681471450152
+Il novantacinquesimo percentile di NG=F è: 0.05510376313130553
+Il quinto percentile di CL=F è: -0.03723846857907138
+Il novantacinquesimo percentile di CL=F è: 0.03364299047432814
+
+Valori sotto il 5° percentile
+         NG=F      CL=F
+0   -0.643974 -0.282206
+1   -0.300480 -0.281796
+2   -0.296448 -0.279920
+3   -0.181358 -0.179298
+4   -0.180661 -0.139985
+..        ...       ...
+200 -0.056164 -0.037306
+201 -0.056041 -0.037305
+202 -0.056033 -0.037263
+203 -0.055983 -0.037253
+204 -0.055975 -0.037247
+
+[205 rows x 2 columns]
+
+Valori sopra il 95° percentile
+         NG=F      CL=F
+0    0.055173  0.033681
+1    0.055203  0.033693
+2    0.055486  0.033732
+3    0.055702  0.033767
+4    0.055762  0.033821
+..        ...       ...
+200  0.221350  0.199196
+201  0.229320  0.213574
+202  0.230400  0.220481
+203  0.253944  0.223940
+204  0.381727  0.319634
+
+[205 rows x 2 columns]
+
+Valori di u [0.08730741 0.96404989 0.12961604 ... 0.77084862 0.05698215 0.24480313]
+
+Valori di v [0.54707753 0.81707019 0.34189288 ... 0.59036439 0.00097823 0.95720225]
+
+Rho di Pearson tra NG=F e CL=F:0.0971
+Tau di Kendall tra NG=F e CL=F: 0.0688
+Rho di Spearman tra NG=F e CL=F: 0.1020
+Lower Tail Dependence (soglia q=0.05): 0.1321
+Upper Tail Dependence (soglia q=0.95): 0.0783
+
+Valori di u e v combinati
+ [[0.08730741 0.54707753]
+ [0.96404989 0.81707019]
+ [0.12961604 0.34189288]
+ ...
+ [0.77084862 0.59036439]
+ [0.05698215 0.00097823]
+ [0.24480313 0.95720225]]
+
+=== Probabilita congiunte empiriche su quantili=== 
+(es. Copula empirica C_n(0.01, 0.01)=P(U<=0.01, V<=0.01) è la probabilita che 
+l'oro sia <= 1% e l'argento sia <= 1% e cosi via. Mentre per P(U>0.99, V>0.99) è la probabilità 
+che l'oro sia > 99% e l'argento sia > 99% e si calcola come 1 - P(U<=0.99) - P(V<=0.99) + C_n(0.99,0.99))
+Copula empirica C_n(0.01, 0.01)=P(U<=0.01, V<=0.01): 0.0000
+P(U>0.01, V>0.01): 0.9804
+Copula empirica C_n(0.05, 0.05)=P(U<=0.05, V<=0.05): 0.0066
+P(U>0.05, V>0.05): 0.9068
+Copula empirica C_n(0.10, 0.10)=P(U<=0.10, V<=0.10): 0.0174
+P(U>0.10, V>0.10): 0.8178
+Copula empirica C_n(0.15, 0.15)=P(U<=0.15, V<=0.15): 0.0325
+P(U>0.15, V>0.15): 0.7326
+Copula empirica C_n(0.85, 0.85)=P(U<=0.85, V<=0.85): 0.7295
+P(U>0.85, V>0.85): 0.0294
+Copula empirica C_n(0.90, 0.90)=P(U<=0.90, V<=0.90): 0.8146
+P(U>0.90, V>0.90): 0.0142
+Copula empirica C_n(0.95, 0.95)=P(U<=0.95, V<=0.95): 0.9041
+P(U>0.95, V>0.95): 0.0039
+Copula empirica C_n(0.99, 0.99)=P(U<=0.99, V<=0.99): 0.9804
+P(U>0.99, V>0.99): 0.0000
+
+=== Confronto code opposte (sinistra vs destra) ===
+C_n(0.01,0.01) = 0.0000  vs  P(U>0.99,V>0.99) = 0.0000  ->  SINISTRA < DESTRA
+C_n(0.05,0.05) = 0.0066  vs  P(U>0.95,V>0.95) = 0.0039  ->  SINISTRA > DESTRA
+C_n(0.10,0.10) = 0.0174  vs  P(U>0.90,V>0.90) = 0.0142  ->  SINISTRA > DESTRA
+C_n(0.15,0.15) = 0.0325  vs  P(U>0.85,V>0.85) = 0.0294  ->  SINISTRA > DESTRA
+
+Clayton Copula:
+Theta: 0.1478
+Lower Tail Dependence: 0.0092
+Upper Tail Dependence: 0.0000
+
+Frank Copula:
+Theta: 0.6217
+Lower Tail Dependence: 0.0000
+Upper Tail Dependence: 0.0000
+
+Gumbel Copula:
+Theta: 1.0739
+Lower Tail Dependence: 0.0000
+Upper Tail Dependence: 0.0932
+
+Gaussian Copula:
+Rho: 0.1095
+Lower Tail Dependence: 0.0000
+Upper Tail Dependence: 0.0000
+
+Student-t Copula:
+Rho: 0.1090
+Nu: 13.2965
+Lower Tail Dependence: 0.0043
+Upper Tail Dependence: 0.0043
+
+Mixture Copula Statica (Clayton + Frank + Gumbel + Gaussian + Student-t, pesi MLE):
+w_Clayton: 0.4354
+w_Frank: 0.0000
+w_Gumbel: 0.0000
+w_Gaussian: 0.0000
+w_Student-t: 0.5646
+Somma pesi (controllo): 1.000000
+
+=== Dipendenza centrale (30%-70%) ===
+Empirica P(0.30<U<=0.70, 0.30<V<=0.70): 0.1712
+Clayton   model: 0.1622, |errore|: 0.0090
+Frank     model: 0.1609, |errore|: 0.0103
+Gumbel    model: 0.1632, |errore|: 0.0080
+Gaussian  model: 0.1608, |errore|: 0.0104
+Student-t model: 0.1658, |errore|: 0.0054
+Mixture   model: 0.1643, |errore|: 0.0070
+
+=== Distanza C_n vs C_theta su griglia ===
+Clayton - MSE: 0.000006, Max|Delta|: 0.008641
+Frank   - MSE: 0.000010, Max|Delta|: 0.008890
+Gumbel  - MSE: 0.000018, Max|Delta|: 0.010709
+Gaussian- MSE: 0.000010, Max|Delta|: 0.008802
+Student-t- MSE: 0.000008, Max|Delta|: 0.008982
+Mixture - MSE: 0.000005, Max|Delta|: 0.008325
+
+=== AIC, BIC e Log-Likelihood (MLE) per ogni copula ===
+Clayton - AIC: -61.85, BIC: -55.53, Log-Likelihood MLE: 31.92
+Frank   - AIC: -41.99, BIC: -35.68, Log-Likelihood MLE: 22.00
+Gumbel  - AIC: -29.60, BIC: -23.28, Log-Likelihood MLE: 15.80
+Gaussian- AIC: -46.93, BIC: -40.61, Log-Likelihood MLE: 24.46
+Student-t- AIC: -64.46, BIC: -51.83, Log-Likelihood MLE: 34.23
+Mixture - AIC: -65.34, BIC: -40.08, Log-Likelihood MLE: 36.67
+
+Output completo salvato in: C:\Users\aless\Desktop\copula_function_python_lab\output\NG=F&CL=F_2010-01-01&2026-04-10.txt
