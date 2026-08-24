@@ -5,9 +5,13 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
+    "copulas>=0.14.0",
+    "matplotlib>=3.11.1",
     "numpy>=2.4.4",
     "pandas>=3.0.2",
     "plotly>=6.0.0",
     "scipy>=1.17.1",
+    "seaborn>=0.13.2",
+    "statsmodels>=0.14.6",
     "yfinance>=1.2.2",
 ]
