@@ -16,8 +16,8 @@ from numpy.random import multivariate_normal
 from copulas.bivariate import Clayton, Frank, Gumbel
 
 #cambiare qualsiasi commodities, azione, strumento finanziario preso da yahoo finance
-waahid= "V"#"GC=F"#"NG=F"#"BTC-USD"#
-ithnaan=  "MA"#"SI=F"#"CL=F"#"ETH-USD"#
+waahid= "BTC-USD"#"GC=F"#"NG=F"#"BTC-USD"#"V"#
+ithnaan=  "ETH-USD"#"SI=F"#"CL=F"#"ETH-USD"#"MA"#
 inizio_periodo="2010-01-01"
 fine_periodo="2026-04-10"
 
@@ -279,7 +279,7 @@ def plot_conditional_mean_empirical_copula(u_vals, v_vals, bandwidth=0.05):
     ax.plot(u_grid, q05, color="purple", lw=1.8, linestyle=":", label="Quantile condizionato 5%")
     ax.plot(u_grid, q95, color="purple", lw=1.8, linestyle=":", label="Quantile condizionato 95%")
     ax.fill_between(u_grid, q05, q95, color="purple", alpha=0.10, label="Banda empirica 5%-95%")
-    ax.plot([0, 1], [0, 1], color="gray", lw=1, linestyle=":", label="Indipendenza")
+    ax.axhline(0.5, color="gray", lw=1, linestyle=":", label="Media condizionata sotto indipendenza")
     ax.set_xlim(0, 1)
     ax.set_ylim(0, 1)
     ax.set_xlabel("u")
@@ -349,7 +349,14 @@ def student_t_cdf(u_vals, v_vals, rho, nu):
     shape = np.array([[1.0, rho], [rho, 1.0]])
     # Valutazione vettoriale: evita migliaia di chiamate Python in loop.
     c_vals = np.asarray(
-        sc.stats.multivariate_t.cdf(points, loc=np.zeros(2), shape=shape, df=nu),
+        sc.stats.multivariate_t.cdf(
+            points,
+            loc=np.zeros(2),
+            shape=shape,
+            df=nu,
+            maxpts=5000,
+            random_state=42,
+        ),
         dtype=float
     )
     return np.clip(c_vals, 0, 1)
@@ -706,27 +713,15 @@ data_uv = np.column_stack((u, v))
 print("\nValori di u e v combinati\n", data_uv)
 
 # Vera copula empirica C_n(u,v) su griglia
-grid_emp, c_n_emp = build_empirical_copula_grid(u, v, grid_size=60)
+# 30x30 mantiene il confronto diagnostico accurato e riduce fortemente il costo della CDF Student-t.
+grid_emp, c_n_emp = build_empirical_copula_grid(u, v, grid_size=30)
 if SHOW_EMPIRICAL_SCATTER:
     plot_empirical_copula(u, v, title=f"Pseudo-osservazioni (u,v) nel quadrato unitario - {waahid} / {ithnaan}")
 if SHOW_EMPIRICAL_CONDITIONAL_CURVE: # pyright: ignore[reportUndefinedVariable]
     plot_conditional_mean_empirical_copula(u, v, bandwidth=0.05)
 
-levels = [0.01, 0.05, 0.10, 0.15, 0.85, 0.90, 0.95, 0.99]
-print("\n=== Probabilita congiunte empiriche su quantili=== \n(es. Copula empirica C_n(0.01, 0.01)=P(U<=0.01, V<=0.01) è la probabilita che \nl'oro sia <= 1% e l'argento sia <= 1% e cosi via. Mentre per P(U>0.99, V>0.99) è la probabilità \nche l'oro sia > 99% e l'argento sia > 99% e si calcola come 1 - P(U<=0.99) - P(V<=0.99) + C_n(0.99,0.99))")
-for q in levels:
-    q_pct = int(round(q * 100))
-    p_u_le_q = np.mean(u <= q)
-    p_v_le_q = np.mean(v <= q)
-    c_q = np.mean((u <= q) & (v <= q))
-    # Formula complementare: P(U>q, V>q) = 1 - P(U<=q) - P(V<=q) + C_n(q,q)
-    p_joint_upper_formula = 1 - p_u_le_q - p_v_le_q + c_q
-    p_joint_upper_direct = np.mean((u > q) & (v > q))
-
-    print(f"Copula empirica C_n({q:.2f}, {q:.2f})=P(U<={q:.2f}, V<={q:.2f}): {c_q:.4f}")
-    print(f"P(U>{q:.2f}, V>{q:.2f}): {p_joint_upper_direct:.4f}")
-
-print("\n=== Confronto code opposte (sinistra vs destra) ===")
+print("\n=== Probabilita congiunte empiriche nelle code opposte ===")
+print("Per ogni q confronto P(U<=q,V<=q) con P(U>1-q,V>1-q).")
 for q_left in [0.01, 0.05, 0.10, 0.15]:
     q_right = 1 - q_left
     c_left = np.mean((u <= q_left) & (v <= q_left))
@@ -882,16 +877,16 @@ c_grid_frank = evaluate_copula_cdf_on_grid(grid_emp, "frank", theta=copula_frank
 c_grid_gumbel = evaluate_copula_cdf_on_grid(grid_emp, "gumbel", theta=copula_gumbel.theta)
 c_grid_gaussian = evaluate_copula_cdf_on_grid(grid_emp, "gaussian", rho=rho_gauss)
 c_grid_student_t = evaluate_copula_cdf_on_grid(grid_emp, "student-t", rho=rho_t, nu=nu_t)
-c_grid_mixture = mixture_cdf_on_grid(
-    grid_emp,
-    [
-        ("clayton", {"theta": copula_clayton.theta}),
-        ("frank", {"theta": copula_frank.theta}),
-        ("gumbel", {"theta": copula_gumbel.theta}),
-        ("gaussian", {"rho": rho_gauss}),
-        ("student-t", {"rho": rho_t, "nu": nu_t}),
-    ],
-    mixture_weights,
+# La mixture e' la combinazione delle griglie gia' calcolate: evita di rivalutare
+# tutte le CDF e, soprattutto, la costosa Student-t una seconda volta.
+c_grid_mixture = np.clip(
+    mixture_weights[0] * c_grid_clayton
+    + mixture_weights[1] * c_grid_frank
+    + mixture_weights[2] * c_grid_gumbel
+    + mixture_weights[3] * c_grid_gaussian
+    + mixture_weights[4] * c_grid_student_t,
+    0,
+    1,
 )
 
 mse_clayton, dmax_clayton = copula_grid_distance_metrics(c_n_emp, c_grid_clayton)
@@ -957,8 +952,11 @@ aic_frank, bic_frank = calculate_aic_bic(ll_frank, num_params, n_obs)
 aic_gumbel, bic_gumbel = calculate_aic_bic(ll_gumbel, num_params, n_obs)
 aic_gaussian, bic_gaussian = calculate_aic_bic(ll_gaussian, 1, n_obs)
 aic_student_t, bic_student_t = calculate_aic_bic(ll_student_t, 2, n_obs)
-# Condizionale ai parametri delle componenti gia' stimati: k = (#pesi - 1).
-aic_mixture, bic_mixture = calculate_aic_bic(ll_mixture, len(mixture_weights) - 1, n_obs)
+# Penalizzazione conservativa: parametri delle 5 componenti + pesi liberi della mixture.
+mixture_component_params = 1 + 1 + 1 + 1 + 2  # Clayton, Frank, Gumbel, Gaussian, Student-t
+mixture_free_weights = len(mixture_weights) - 1
+mixture_num_params = mixture_component_params + mixture_free_weights
+aic_mixture, bic_mixture = calculate_aic_bic(ll_mixture, mixture_num_params, n_obs)
 
 # Stampa dei risultati
 print("\n=== AIC, BIC e Log-Likelihood (MLE) per ogni copula ===")
@@ -968,6 +966,7 @@ print(f"Gumbel  - AIC: {aic_gumbel:.2f}, BIC: {bic_gumbel:.2f}, Log-Likelihood M
 print(f"Gaussian- AIC: {aic_gaussian:.2f}, BIC: {bic_gaussian:.2f}, Log-Likelihood MLE: {ll_gaussian:.2f}")
 print(f"Student-t- AIC: {aic_student_t:.2f}, BIC: {bic_student_t:.2f}, Log-Likelihood MLE: {ll_student_t:.2f}")
 print(f"Mixture - AIC: {aic_mixture:.2f}, BIC: {bic_mixture:.2f}, Log-Likelihood MLE: {ll_mixture:.2f}")
+print(f"Nota Mixture: AIC/BIC calcolati con k={mixture_num_params} (6 parametri delle componenti + 4 pesi liberi).")
 
 print(f"\nOutput completo salvato in: {LOG_FILE_PATH}")
 sys.stdout = _original_stdout
