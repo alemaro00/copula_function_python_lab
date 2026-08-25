@@ -16,10 +16,10 @@ from numpy.random import multivariate_normal
 from copulas.bivariate import Clayton, Frank, Gumbel
 
 #cambiare qualsiasi commodities, azione, strumento finanziario preso da yahoo finance
-waahid= "BTC-USD"#"GC=F"#"NG=F"#"BTC-USD"#"V"#
-ithnaan=  "ETH-USD"#"SI=F"#"CL=F"#"ETH-USD"#"MA"#
+waahid= "V"#"BTC-USD"#"GC=F"#"NG=F"
+ithnaan=  "MA"#"ETH-USD"#"SI=F"#"CL=F"
 inizio_periodo="2010-01-01"
-fine_periodo="2026-04-10"
+fine_periodo="2026-08-24"
 
 
 def validate_inputs(asset_a, asset_b, start_date, end_date):
@@ -720,7 +720,12 @@ if SHOW_EMPIRICAL_SCATTER:
 if SHOW_EMPIRICAL_CONDITIONAL_CURVE: # pyright: ignore[reportUndefinedVariable]
     plot_conditional_mean_empirical_copula(u, v, bandwidth=0.05)
 
-print("\n=== Probabilita congiunte empiriche nelle code opposte ===")
+print("\n=== Probabilita congiunte e condizionate empiriche per soglia ===")
+print("Probabilita congiunta: indica quanto spesso i due asset si trovano contemporaneamente nella stessa fascia di rendimenti.")
+print("Risponde alla domanda: in una giornata qualsiasi, qual e' la probabilita che entrambi siano tra i propri rendimenti peggiori o migliori?")
+print("Probabilita condizionata: considera soltanto le giornate in cui il primo asset si trova nella fascia scelta.")
+print("Risponde alla domanda: in quelle giornate, qual e' la probabilita che anche il secondo asset sia nella stessa fascia?")
+print("\n--- Confronto delle probabilita congiunte nelle code opposte ---")
 print("Per ogni q confronto P(U<=q,V<=q) con P(U>1-q,V>1-q).")
 for q_left in [0.01, 0.05, 0.10, 0.15]:
     q_right = 1 - q_left
@@ -740,6 +745,39 @@ for q_left in [0.01, 0.05, 0.10, 0.15]:
     print(
         f"C_n({q_left:.2f},{q_left:.2f}) = {c_left:.4f}  vs  "
         f"P(U>{q_right:.2f},V>{q_right:.2f}) = {p_joint_right:.4f}  ->  {verdict}"
+    )
+
+# Probabilita condizionate empiriche in entrambe le direzioni e su piu soglie.
+conditional_levels = [0.01, 0.025, 0.05, 0.10, 0.15, 0.20, 0.25]
+print("\n--- Dettaglio delle probabilita condizionate per soglia ---")
+print(f"U = {waahid}, V = {ithnaan}")
+for q in conditional_levels:
+    q_upper = 1 - q
+
+    lower_u = u <= q
+    lower_v = v <= q
+    lower_joint_mask = lower_u & lower_v
+    lower_joint = np.mean(lower_joint_mask)
+    lower_v_given_u = lower_joint / np.mean(lower_u)
+    lower_u_given_v = lower_joint / np.mean(lower_v)
+
+    upper_u = u > q_upper
+    upper_v = v > q_upper
+    upper_joint_mask = upper_u & upper_v
+    upper_joint = np.mean(upper_joint_mask)
+    upper_v_given_u = upper_joint / np.mean(upper_u)
+    upper_u_given_v = upper_joint / np.mean(upper_v)
+
+    print(f"\nSoglia q={q:.1%} (coda superiore oltre {q_upper:.1%})")
+    print(
+        f"  Coda inferiore: P(congiunta)={lower_joint:.4f} | "
+        f"P({ithnaan} bassa | {waahid} bassa)={lower_v_given_u:.2%} [n={np.sum(lower_u)}] | "
+        f"P({waahid} bassa | {ithnaan} bassa)={lower_u_given_v:.2%} [n={np.sum(lower_v)}]"
+    )
+    print(
+        f"  Coda superiore: P(congiunta)={upper_joint:.4f} | "
+        f"P({ithnaan} alta | {waahid} alta)={upper_v_given_u:.2%} [n={np.sum(upper_u)}] | "
+        f"P({waahid} alta | {ithnaan} alta)={upper_u_given_v:.2%} [n={np.sum(upper_v)}]"
     )
 
 # Stima delle copule
@@ -967,6 +1005,19 @@ print(f"Gaussian- AIC: {aic_gaussian:.2f}, BIC: {bic_gaussian:.2f}, Log-Likeliho
 print(f"Student-t- AIC: {aic_student_t:.2f}, BIC: {bic_student_t:.2f}, Log-Likelihood MLE: {ll_student_t:.2f}")
 print(f"Mixture - AIC: {aic_mixture:.2f}, BIC: {bic_mixture:.2f}, Log-Likelihood MLE: {ll_mixture:.2f}")
 print(f"Nota Mixture: AIC/BIC calcolati con k={mixture_num_params} (6 parametri delle componenti + 4 pesi liberi).")
+model_scores = [
+    ("Clayton", aic_clayton, bic_clayton, ll_clayton),
+    ("Frank", aic_frank, bic_frank, ll_frank),
+    ("Gumbel", aic_gumbel, bic_gumbel, ll_gumbel),
+    ("Gaussian", aic_gaussian, bic_gaussian, ll_gaussian),
+    ("Student-t", aic_student_t, bic_student_t, ll_student_t),
+    ("Mixture", aic_mixture, bic_mixture, ll_mixture),
+]
+best_aic_name = min(model_scores, key=lambda row: row[1])[0]
+best_bic_name = min(model_scores, key=lambda row: row[2])[0]
+best_ll_name = max(model_scores, key=lambda row: row[3])[0]
+print("Come leggere: AIC e BIC piu bassi indicano il modello preferibile; una Log-Likelihood piu alta indica un migliore adattamento ai dati.")
+print(f"Risultato automatico: AIC -> {best_aic_name} | BIC -> {best_bic_name} | Log-Likelihood -> {best_ll_name}.")
 
 print(f"\nOutput completo salvato in: {LOG_FILE_PATH}")
 sys.stdout = _original_stdout

@@ -1,0 +1,218 @@
+Dati scaricati da Yahoo e salvati in cache: prezzi_close_cache.csv
+Il dataframe con V e MA è:
+
+ Ticker              V         MA
+Date                            
+2010-01-04  19.528389  23.502705
+2010-01-05  19.304609  23.433159
+2010-01-06  19.045395  23.399271
+2010-01-07  19.222639  23.246370
+2010-01-08  19.275814  23.254618
+
+Numero di righe con almeno un NaN: 0
+Numero totale di celle NaN: 0
+
+Ticker               V          MA
+Date                              
+2010-01-04   19.528389   23.502705
+2010-01-05   19.304609   23.433159
+2010-01-06   19.045395   23.399271
+2010-01-07   19.222639   23.246370
+2010-01-08   19.275814   23.254618
+...                ...         ...
+2026-08-17  358.839996  562.260010
+2026-08-18  364.250000  574.309998
+2026-08-19  365.540009  573.719971
+2026-08-20  365.730011  573.849976
+2026-08-21  371.040009  580.630005
+
+[4184 rows x 2 columns]
+
+=== Rendimenti logaritmici ===
+
+Ticker             V        MA
+Date                          
+2010-01-05 -0.011525 -0.002963
+2010-01-06 -0.013519 -0.001447
+2010-01-07  0.009263 -0.006556
+2010-01-08  0.002762  0.000355
+2010-01-11 -0.002878 -0.016595
+...              ...       ...
+2026-08-17 -0.014689 -0.012426
+2026-08-18  0.014964  0.021205
+2026-08-19  0.003535 -0.001028
+2026-08-20  0.000520  0.000227
+2026-08-21  0.014415  0.011746
+
+[4183 rows x 2 columns]
+
+Test for Normality: Jarque-Bera
+
+V -> p-value: 0.0000
+Distribuzione NON normale
+
+MA -> p-value: 0.0000
+Distribuzione NON normale
+
+
+Il quinto percentile di V è: -0.02309331575321857
+Il novantacinquesimo percentile di V è: 0.02223075306282516
+Il quinto percentile di MA è: -0.02552172848341421
+Il novantacinquesimo percentile di MA è: 0.02538095681087009
+
+Valori sotto il 5° percentile
+            V        MA
+0   -0.145572 -0.136112
+1   -0.135502 -0.111936
+2   -0.104026 -0.110663
+3   -0.080531 -0.108970
+4   -0.078534 -0.108561
+..        ...       ...
+205 -0.023367 -0.025885
+206 -0.023268 -0.025826
+207 -0.023183 -0.025719
+208 -0.023158 -0.025671
+209 -0.023098 -0.025525
+
+[210 rows x 2 columns]
+
+Valori sopra il 95° percentile
+            V        MA
+0    0.022232  0.025384
+1    0.022251  0.025389
+2    0.022266  0.025429
+3    0.022281  0.025497
+4    0.022292  0.025518
+..        ...       ...
+205  0.097527  0.107156
+206  0.100742  0.111590
+207  0.109606  0.115084
+208  0.129646  0.125699
+209  0.139739  0.153673
+
+[210 rows x 2 columns]
+
+Valori di u [0.15607075 0.12141491 0.77198853 ... 0.58532505 0.47418738 0.87189293]
+
+Valori di v [0.35372849 0.40535373 0.26386233 ... 0.42112811 0.46295411 0.81285851]
+
+Rho di Pearson tra V e MA:0.8504
+Tau di Kendall tra V e MA: 0.6415
+Rho di Spearman tra V e MA: 0.8204
+Lower Tail Dependence (soglia q=0.05): 0.6455
+Upper Tail Dependence (soglia q=0.95): 0.5833
+
+Valori di u e v combinati
+ [[0.15607075 0.35372849]
+ [0.12141491 0.40535373]
+ [0.77198853 0.26386233]
+ ...
+ [0.58532505 0.42112811]
+ [0.47418738 0.46295411]
+ [0.87189293 0.81285851]]
+
+=== Probabilita congiunte e condizionate empiriche per soglia ===
+Probabilita congiunta: indica quanto spesso i due asset si trovano contemporaneamente nella stessa fascia di rendimenti.
+Risponde alla domanda: in una giornata qualsiasi, qual e' la probabilita che entrambi siano tra i propri rendimenti peggiori o migliori?
+Probabilita condizionata: considera soltanto le giornate in cui il primo asset si trova nella fascia scelta.
+Risponde alla domanda: in quelle giornate, qual e' la probabilita che anche il secondo asset sia nella stessa fascia?
+
+--- Confronto delle probabilita congiunte nelle code opposte ---
+Per ogni q confronto P(U<=q,V<=q) con P(U>1-q,V>1-q).
+C_n(0.01,0.01) = 0.0055  vs  P(U>0.99,V>0.99) = 0.0057  ->  SINISTRA < DESTRA
+C_n(0.05,0.05) = 0.0323  vs  P(U>0.95,V>0.95) = 0.0292  ->  SINISTRA > DESTRA
+C_n(0.10,0.10) = 0.0696  vs  P(U>0.90,V>0.90) = 0.0629  ->  SINISTRA > DESTRA
+C_n(0.15,0.15) = 0.1059  vs  P(U>0.85,V>0.85) = 0.1009  ->  SINISTRA > DESTRA
+
+--- Dettaglio delle probabilita condizionate per soglia ---
+U = V, V = MA
+
+Soglia q=1.0% (coda superiore oltre 99.0%)
+  Coda inferiore: P(congiunta)=0.0055 | P(MA bassa | V bassa)=56.10% [n=41] | P(V bassa | MA bassa)=56.10% [n=41]
+  Coda superiore: P(congiunta)=0.0057 | P(MA alta | V alta)=58.54% [n=41] | P(V alta | MA alta)=58.54% [n=41]
+
+Soglia q=2.5% (coda superiore oltre 97.5%)
+  Coda inferiore: P(congiunta)=0.0158 | P(MA bassa | V bassa)=63.46% [n=104] | P(V bassa | MA bassa)=63.46% [n=104]
+  Coda superiore: P(congiunta)=0.0165 | P(MA alta | V alta)=66.35% [n=104] | P(V alta | MA alta)=66.35% [n=104]
+
+Soglia q=5.0% (coda superiore oltre 95.0%)
+  Coda inferiore: P(congiunta)=0.0323 | P(MA bassa | V bassa)=64.59% [n=209] | P(V bassa | MA bassa)=64.59% [n=209]
+  Coda superiore: P(congiunta)=0.0292 | P(MA alta | V alta)=58.37% [n=209] | P(V alta | MA alta)=58.37% [n=209]
+
+Soglia q=10.0% (coda superiore oltre 90.0%)
+  Coda inferiore: P(congiunta)=0.0696 | P(MA bassa | V bassa)=69.62% [n=418] | P(V bassa | MA bassa)=69.62% [n=418]
+  Coda superiore: P(congiunta)=0.0629 | P(MA alta | V alta)=62.92% [n=418] | P(V alta | MA alta)=62.92% [n=418]
+
+Soglia q=15.0% (coda superiore oltre 85.0%)
+  Coda inferiore: P(congiunta)=0.1059 | P(MA bassa | V bassa)=70.65% [n=627] | P(V bassa | MA bassa)=70.65% [n=627]
+  Coda superiore: P(congiunta)=0.1009 | P(MA alta | V alta)=67.30% [n=627] | P(V alta | MA alta)=67.30% [n=627]
+
+Soglia q=20.0% (coda superiore oltre 80.0%)
+  Coda inferiore: P(congiunta)=0.1458 | P(MA bassa | V bassa)=72.97% [n=836] | P(V bassa | MA bassa)=72.97% [n=836]
+  Coda superiore: P(congiunta)=0.1382 | P(MA alta | V alta)=69.14% [n=836] | P(V alta | MA alta)=69.14% [n=836]
+
+Soglia q=25.0% (coda superiore oltre 75.0%)
+  Coda inferiore: P(congiunta)=0.1881 | P(MA bassa | V bassa)=75.24% [n=1046] | P(V bassa | MA bassa)=75.24% [n=1046]
+  Coda superiore: P(congiunta)=0.1771 | P(MA alta | V alta)=70.91% [n=1045] | P(V alta | MA alta)=70.91% [n=1045]
+
+Clayton Copula:
+Theta: 3.5783
+Lower Tail Dependence: 0.8239
+Upper Tail Dependence: 0.0000
+
+Frank Copula:
+Theta: 9.1529
+Lower Tail Dependence: 0.0000
+Upper Tail Dependence: 0.0000
+
+Gumbel Copula:
+Theta: 2.7892
+Lower Tail Dependence: 0.0000
+Upper Tail Dependence: 0.7179
+
+Gaussian Copula:
+Rho: 0.8411
+Lower Tail Dependence: 0.0000
+Upper Tail Dependence: 0.0000
+
+Student-t Copula:
+Rho: 0.8459
+Nu: 3.5168
+Lower Tail Dependence: 0.5688
+Upper Tail Dependence: 0.5688
+
+Mixture Copula Statica (Clayton + Frank + Gumbel + Gaussian + Student-t, pesi MLE):
+w_Clayton: 0.0830
+w_Frank: 0.0000
+w_Gumbel: 0.0000
+w_Gaussian: 0.0003
+w_Student-t: 0.9167
+Somma pesi (controllo): 1.000000
+
+=== Dipendenza centrale (30%-70%) ===
+Empirica P(0.30<U<=0.70, 0.30<V<=0.70): 0.2615
+Clayton   model: 0.2548, |errore|: 0.0067
+Frank     model: 0.2607, |errore|: 0.0008
+Gumbel    model: 0.2551, |errore|: 0.0064
+Gaussian  model: 0.2478, |errore|: 0.0138
+Student-t model: 0.2611, |errore|: 0.0005
+Mixture   model: 0.2605, |errore|: 0.0010
+
+=== Distanza C_n vs C_theta su griglia ===
+Clayton - MSE: 0.000084, Max|Delta|: 0.032371
+Frank   - MSE: 0.000041, Max|Delta|: 0.020194
+Gumbel  - MSE: 0.000036, Max|Delta|: 0.020620
+Gaussian- MSE: 0.000007, Max|Delta|: 0.011240
+Student-t- MSE: 0.000004, Max|Delta|: 0.007678
+Mixture - MSE: 0.000002, Max|Delta|: 0.005824
+
+=== AIC, BIC e Log-Likelihood (MLE) per ogni copula ===
+Clayton - AIC: -4108.51, BIC: -4102.17, Log-Likelihood MLE: 2055.25
+Frank   - AIC: -4760.07, BIC: -4753.73, Log-Likelihood MLE: 2381.04
+Gumbel  - AIC: -5048.83, BIC: -5042.49, Log-Likelihood MLE: 2525.41
+Gaussian- AIC: -5127.57, BIC: -5121.23, Log-Likelihood MLE: 2564.78
+Student-t- AIC: -5521.85, BIC: -5509.18, Log-Likelihood MLE: 2762.93
+Mixture - AIC: -5517.14, BIC: -5453.75, Log-Likelihood MLE: 2768.57
+Nota Mixture: AIC/BIC calcolati con k=10 (6 parametri delle componenti + 4 pesi liberi).
+
+Output completo salvato in: C:\Users\aless\Desktop\copula_function_python_lab\output\V&MA_2010-01-01&2026-08-24.txt
