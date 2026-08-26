@@ -3,22 +3,22 @@ Il dataframe con V e MA è:
 
  Ticker              V         MA
 Date                            
-2010-01-04  19.528389  23.502705
-2010-01-05  19.304609  23.433159
-2010-01-06  19.045395  23.399271
+2010-01-04  19.528391  23.502699
+2010-01-05  19.304613  23.433151
+2010-01-06  19.045385  23.399277
 2010-01-07  19.222639  23.246370
-2010-01-08  19.275814  23.254618
+2010-01-08  19.275808  23.254606
 
 Numero di righe con almeno un NaN: 0
 Numero totale di celle NaN: 0
 
 Ticker               V          MA
 Date                              
-2010-01-04   19.528389   23.502705
-2010-01-05   19.304609   23.433159
-2010-01-06   19.045395   23.399271
+2010-01-04   19.528391   23.502699
+2010-01-05   19.304613   23.433151
+2010-01-06   19.045385   23.399277
 2010-01-07   19.222639   23.246370
-2010-01-08   19.275814   23.254618
+2010-01-08   19.275808   23.254606
 ...                ...         ...
 2026-08-17  358.839996  562.260010
 2026-08-18  364.250000  574.309998
@@ -32,11 +32,11 @@ Date
 
 Ticker             V        MA
 Date                          
-2010-01-05 -0.011525 -0.002963
+2010-01-05 -0.011525 -0.002964
 2010-01-06 -0.013519 -0.001447
-2010-01-07  0.009263 -0.006556
-2010-01-08  0.002762  0.000355
-2010-01-11 -0.002878 -0.016595
+2010-01-07  0.009264 -0.006556
+2010-01-08  0.002762  0.000354
+2010-01-11 -0.002877 -0.016595
 ...              ...       ...
 2026-08-17 -0.014689 -0.012426
 2026-08-18  0.014964  0.021205
@@ -55,31 +55,31 @@ MA -> p-value: 0.0000
 Distribuzione NON normale
 
 
-Il quinto percentile di V è: -0.02309331575321857
-Il novantacinquesimo percentile di V è: 0.02223075306282516
-Il quinto percentile di MA è: -0.02552172848341421
-Il novantacinquesimo percentile di MA è: 0.02538095681087009
+Il quinto percentile di V è: -0.02309247901186199
+Il novantacinquesimo percentile di V è: 0.022230740726649132
+Il quinto percentile di MA è: -0.025521415382089924
+Il novantacinquesimo percentile di MA è: 0.025380597701254216
 
 Valori sotto il 5° percentile
             V        MA
-0   -0.145572 -0.136112
+0   -0.145572 -0.136111
 1   -0.135502 -0.111936
-2   -0.104026 -0.110663
-3   -0.080531 -0.108970
+2   -0.104026 -0.110664
+3   -0.080532 -0.108969
 4   -0.078534 -0.108561
 ..        ...       ...
-205 -0.023367 -0.025885
+205 -0.023367 -0.025884
 206 -0.023268 -0.025826
 207 -0.023183 -0.025719
-208 -0.023158 -0.025671
-209 -0.023098 -0.025525
+208 -0.023159 -0.025671
+209 -0.023097 -0.025524
 
 [210 rows x 2 columns]
 
 Valori sopra il 95° percentile
             V        MA
 0    0.022232  0.025384
-1    0.022251  0.025389
+1    0.022250  0.025388
 2    0.022266  0.025429
 3    0.022281  0.025497
 4    0.022292  0.025518
@@ -87,14 +87,14 @@ Valori sopra il 95° percentile
 205  0.097527  0.107156
 206  0.100742  0.111590
 207  0.109606  0.115084
-208  0.129646  0.125699
+208  0.129647  0.125699
 209  0.139739  0.153673
 
 [210 rows x 2 columns]
 
-Valori di u [0.15607075 0.12141491 0.77198853 ... 0.58532505 0.47418738 0.87189293]
+Valori di u [0.15607075 0.12141491 0.77222753 ... 0.58532505 0.47418738 0.87189293]
 
-Valori di v [0.35372849 0.40535373 0.26386233 ... 0.42112811 0.46295411 0.81285851]
+Valori di v [0.35348948 0.40535373 0.26386233 ... 0.42112811 0.46295411 0.81285851]
 
 Rho di Pearson tra V e MA:0.8504
 Tau di Kendall tra V e MA: 0.6415
@@ -103,21 +103,23 @@ Lower Tail Dependence (soglia q=0.05): 0.6455
 Upper Tail Dependence (soglia q=0.95): 0.5833
 
 Valori di u e v combinati
- [[0.15607075 0.35372849]
+ [[0.15607075 0.35348948]
  [0.12141491 0.40535373]
- [0.77198853 0.26386233]
+ [0.77222753 0.26386233]
  ...
  [0.58532505 0.42112811]
  [0.47418738 0.46295411]
  [0.87189293 0.81285851]]
 
 === Probabilita congiunte e condizionate empiriche per soglia ===
+
 Probabilita congiunta: indica quanto spesso i due asset si trovano contemporaneamente nella stessa fascia di rendimenti.
 Risponde alla domanda: in una giornata qualsiasi, qual e' la probabilita che entrambi siano tra i propri rendimenti peggiori o migliori?
 Probabilita condizionata: considera soltanto le giornate in cui il primo asset si trova nella fascia scelta.
 Risponde alla domanda: in quelle giornate, qual e' la probabilita che anche il secondo asset sia nella stessa fascia?
 
 --- Confronto delle probabilita congiunte nelle code opposte ---
+
 Per ogni q confronto P(U<=q,V<=q) con P(U>1-q,V>1-q).
 C_n(0.01,0.01) = 0.0055  vs  P(U>0.99,V>0.99) = 0.0057  ->  SINISTRA < DESTRA
 C_n(0.05,0.05) = 0.0323  vs  P(U>0.95,V>0.95) = 0.0292  ->  SINISTRA > DESTRA
@@ -125,6 +127,7 @@ C_n(0.10,0.10) = 0.0696  vs  P(U>0.90,V>0.90) = 0.0629  ->  SINISTRA > DESTRA
 C_n(0.15,0.15) = 0.1059  vs  P(U>0.85,V>0.85) = 0.1009  ->  SINISTRA > DESTRA
 
 --- Dettaglio delle probabilita condizionate per soglia ---
+
 U = V, V = MA
 
 Soglia q=1.0% (coda superiore oltre 99.0%)
@@ -177,7 +180,7 @@ Upper Tail Dependence: 0.0000
 
 Student-t Copula:
 Rho: 0.8459
-Nu: 3.5168
+Nu: 3.5167
 Lower Tail Dependence: 0.5688
 Upper Tail Dependence: 0.5688
 
@@ -190,6 +193,7 @@ w_Student-t: 0.9167
 Somma pesi (controllo): 1.000000
 
 === Dipendenza centrale (30%-70%) ===
+
 Empirica P(0.30<U<=0.70, 0.30<V<=0.70): 0.2615
 Clayton   model: 0.2548, |errore|: 0.0067
 Frank     model: 0.2607, |errore|: 0.0008
@@ -199,6 +203,7 @@ Student-t model: 0.2611, |errore|: 0.0005
 Mixture   model: 0.2605, |errore|: 0.0010
 
 === Distanza C_n vs C_theta su griglia ===
+
 Clayton - MSE: 0.000084, Max|Delta|: 0.032371
 Frank   - MSE: 0.000041, Max|Delta|: 0.020194
 Gumbel  - MSE: 0.000036, Max|Delta|: 0.020620
@@ -207,12 +212,17 @@ Student-t- MSE: 0.000004, Max|Delta|: 0.007678
 Mixture - MSE: 0.000002, Max|Delta|: 0.005824
 
 === AIC, BIC e Log-Likelihood (MLE) per ogni copula ===
-Clayton - AIC: -4108.51, BIC: -4102.17, Log-Likelihood MLE: 2055.25
+
+AIC e BIC piu bassi indicano il modello preferibile; una Log-Likelihood piu alta indica un migliore adattamento ai dati.
+Clayton - AIC: -4108.56, BIC: -4102.22, Log-Likelihood MLE: 2055.28
 Frank   - AIC: -4760.07, BIC: -4753.73, Log-Likelihood MLE: 2381.04
-Gumbel  - AIC: -5048.83, BIC: -5042.49, Log-Likelihood MLE: 2525.41
-Gaussian- AIC: -5127.57, BIC: -5121.23, Log-Likelihood MLE: 2564.78
-Student-t- AIC: -5521.85, BIC: -5509.18, Log-Likelihood MLE: 2762.93
-Mixture - AIC: -5517.14, BIC: -5453.75, Log-Likelihood MLE: 2768.57
+Gumbel  - AIC: -5048.84, BIC: -5042.50, Log-Likelihood MLE: 2525.42
+Gaussian- AIC: -5127.58, BIC: -5121.24, Log-Likelihood MLE: 2564.79
+Student-t- AIC: -5521.88, BIC: -5509.20, Log-Likelihood MLE: 2762.94
+Mixture - AIC: -5517.16, BIC: -5453.78, Log-Likelihood MLE: 2768.58
 Nota Mixture: AIC/BIC calcolati con k=10 (6 parametri delle componenti + 4 pesi liberi).
 
+Risultato automatico: AIC -> Student-t | BIC -> Student-t | Log-Likelihood -> Mixture.
+
 Output completo salvato in: C:\Users\aless\Desktop\copula_function_python_lab\output\V&MA_2010-01-01&2026-08-24.txt
+

@@ -1,0 +1,228 @@
+Dati scaricati da Yahoo e salvati in cache: prezzi_close_cache.csv
+Il dataframe con BTC-USD e ETH-USD è:
+
+ Ticker         BTC-USD  ETH-USD
+Date                           
+2014-09-17  457.334015      NaN
+2014-09-18  424.440002      NaN
+2014-09-19  394.795990      NaN
+2014-09-20  408.903992      NaN
+2014-09-21  398.821014      NaN
+
+Numero di righe con almeno un NaN: 1149
+Numero totale di celle NaN: 1149
+
+Ticker           BTC-USD      ETH-USD
+Date                                 
+2017-11-09   7143.580078   320.884003
+2017-11-10   6618.140137   299.252991
+2017-11-11   6357.600098   314.681000
+2017-11-12   5950.069824   307.907990
+2017-11-13   6559.490234   316.716003
+...                  ...          ...
+2026-08-19  69266.187500  2251.458008
+2026-08-20  73032.757812  2326.384766
+2026-08-21  78335.187500  2515.281738
+2026-08-22  77083.414062  2424.251221
+2026-08-23  77755.265625  2463.815918
+
+[3210 rows x 2 columns]
+
+=== Rendimenti logaritmici ===
+
+Ticker       BTC-USD   ETH-USD
+Date                          
+2017-11-10 -0.076400 -0.069790
+2017-11-11 -0.040163  0.050270
+2017-11-12 -0.066248 -0.021758
+2017-11-13  0.097510  0.028204
+2017-11-14  0.011559  0.063948
+...              ...       ...
+2026-08-19  0.068494  0.161098
+2026-08-20  0.052951  0.032737
+2026-08-21  0.070089  0.078069
+2026-08-22 -0.016109 -0.036862
+2026-08-23  0.008678  0.016189
+
+[3209 rows x 2 columns]
+
+Test for Normality: Jarque-Bera
+
+BTC-USD -> p-value: 0.0000
+Distribuzione NON normale
+
+ETH-USD -> p-value: 0.0000
+Distribuzione NON normale
+
+
+Il quinto percentile di BTC-USD è: -0.05251588474630344
+Il novantacinquesimo percentile di BTC-USD è: 0.05352507703210498
+Il quinto percentile di ETH-USD è: -0.06913645688837954
+Il novantacinquesimo percentile di ETH-USD è: 0.06943746931320052
+
+Valori sotto il 5° percentile
+      BTC-USD   ETH-USD
+0   -0.464730 -0.550732
+1   -0.184582 -0.317459
+2   -0.174053 -0.209000
+3   -0.173982 -0.206860
+4   -0.154890 -0.203831
+..        ...       ...
+156 -0.053200 -0.069700
+157 -0.052946 -0.069478
+158 -0.052694 -0.069269
+159 -0.052650 -0.069200
+160 -0.052639 -0.069160
+
+[161 rows x 2 columns]
+
+Valori sopra il 95° percentile
+      BTC-USD   ETH-USD
+0    0.053528  0.069509
+1    0.053537  0.069937
+2    0.053649  0.069986
+3    0.053653  0.070106
+4    0.053673  0.070110
+..        ...       ...
+156  0.160042  0.176238
+157  0.167104  0.197200
+158  0.171821  0.225649
+159  0.181724  0.230695
+160  0.225119  0.234741
+
+[161 rows x 2 columns]
+
+Valori di u [0.02056075 0.0788162  0.02959502 ... 0.96853583 0.2211838  0.65451713]
+
+Valori di v [0.04859813 0.9046729  0.22897196 ... 0.96137072 0.13426791 0.70186916]
+
+Rho di Pearson tra BTC-USD e ETH-USD:0.7964
+Tau di Kendall tra BTC-USD e ETH-USD: 0.6274
+Rho di Spearman tra BTC-USD e ETH-USD: 0.7990
+Lower Tail Dependence (soglia q=0.05): 0.6357
+Upper Tail Dependence (soglia q=0.95): 0.4487
+
+Valori di u e v combinati
+ [[0.02056075 0.04859813]
+ [0.0788162  0.9046729 ]
+ [0.02959502 0.22897196]
+ ...
+ [0.96853583 0.96137072]
+ [0.2211838  0.13426791]
+ [0.65451713 0.70186916]]
+
+=== Probabilita congiunte e condizionate empiriche per soglia ===
+
+Probabilita congiunta: indica quanto spesso i due asset si trovano contemporaneamente nella stessa fascia di rendimenti.
+Risponde alla domanda: in una giornata qualsiasi, qual e' la probabilita che entrambi siano tra i propri rendimenti peggiori o migliori?
+Probabilita condizionata: considera soltanto le giornate in cui il primo asset si trova nella fascia scelta.
+Risponde alla domanda: in quelle giornate, qual e' la probabilita che anche il secondo asset sia nella stessa fascia?
+
+--- Confronto delle probabilita congiunte nelle code opposte ---
+
+Per ogni q confronto P(U<=q,V<=q) con P(U>1-q,V>1-q).
+C_n(0.01,0.01) = 0.0059  vs  P(U>0.99,V>0.99) = 0.0028  ->  SINISTRA > DESTRA
+C_n(0.05,0.05) = 0.0318  vs  P(U>0.95,V>0.95) = 0.0224  ->  SINISTRA > DESTRA
+C_n(0.10,0.10) = 0.0701  vs  P(U>0.90,V>0.90) = 0.0542  ->  SINISTRA > DESTRA
+C_n(0.15,0.15) = 0.1109  vs  P(U>0.85,V>0.85) = 0.0863  ->  SINISTRA > DESTRA
+
+--- Dettaglio delle probabilita condizionate per soglia ---
+
+U = BTC-USD, V = ETH-USD
+
+Soglia q=1.0% (coda superiore oltre 99.0%)
+  Coda inferiore: P(congiunta)=0.0059 | P(ETH-USD bassa | BTC-USD bassa)=59.38% [n=32] | P(BTC-USD bassa | ETH-USD bassa)=59.38% [n=32]
+  Coda superiore: P(congiunta)=0.0028 | P(ETH-USD alta | BTC-USD alta)=28.12% [n=32] | P(BTC-USD alta | ETH-USD alta)=28.12% [n=32]
+
+Soglia q=2.5% (coda superiore oltre 97.5%)
+  Coda inferiore: P(congiunta)=0.0168 | P(ETH-USD bassa | BTC-USD bassa)=67.50% [n=80] | P(BTC-USD bassa | ETH-USD bassa)=67.50% [n=80]
+  Coda superiore: P(congiunta)=0.0106 | P(ETH-USD alta | BTC-USD alta)=42.50% [n=80] | P(BTC-USD alta | ETH-USD alta)=42.50% [n=80]
+
+Soglia q=5.0% (coda superiore oltre 95.0%)
+  Coda inferiore: P(congiunta)=0.0318 | P(ETH-USD bassa | BTC-USD bassa)=63.75% [n=160] | P(BTC-USD bassa | ETH-USD bassa)=63.75% [n=160]
+  Coda superiore: P(congiunta)=0.0224 | P(ETH-USD alta | BTC-USD alta)=45.00% [n=160] | P(BTC-USD alta | ETH-USD alta)=45.00% [n=160]
+
+Soglia q=10.0% (coda superiore oltre 90.0%)
+  Coda inferiore: P(congiunta)=0.0701 | P(ETH-USD bassa | BTC-USD bassa)=70.09% [n=321] | P(BTC-USD bassa | ETH-USD bassa)=70.09% [n=321]
+  Coda superiore: P(congiunta)=0.0542 | P(ETH-USD alta | BTC-USD alta)=54.38% [n=320] | P(BTC-USD alta | ETH-USD alta)=54.38% [n=320]
+
+Soglia q=15.0% (coda superiore oltre 85.0%)
+  Coda inferiore: P(congiunta)=0.1109 | P(ETH-USD bassa | BTC-USD bassa)=74.01% [n=481] | P(BTC-USD bassa | ETH-USD bassa)=74.01% [n=481]
+  Coda superiore: P(congiunta)=0.0863 | P(ETH-USD alta | BTC-USD alta)=57.59% [n=481] | P(BTC-USD alta | ETH-USD alta)=57.59% [n=481]
+
+Soglia q=20.0% (coda superiore oltre 80.0%)
+  Coda inferiore: P(congiunta)=0.1493 | P(ETH-USD bassa | BTC-USD bassa)=74.61% [n=642] | P(BTC-USD bassa | ETH-USD bassa)=74.61% [n=642]
+  Coda superiore: P(congiunta)=0.1250 | P(ETH-USD alta | BTC-USD alta)=62.56% [n=641] | P(BTC-USD alta | ETH-USD alta)=62.56% [n=641]
+
+Soglia q=25.0% (coda superiore oltre 75.0%)
+  Coda inferiore: P(congiunta)=0.1898 | P(ETH-USD bassa | BTC-USD bassa)=75.94% [n=802] | P(BTC-USD bassa | ETH-USD bassa)=75.94% [n=802]
+  Coda superiore: P(congiunta)=0.1726 | P(ETH-USD alta | BTC-USD alta)=69.08% [n=802] | P(BTC-USD alta | ETH-USD alta)=69.08% [n=802]
+
+Clayton Copula:
+Theta: 3.3671
+Lower Tail Dependence: 0.8139
+Upper Tail Dependence: 0.0000
+
+Frank Copula:
+Theta: 8.7086
+Lower Tail Dependence: 0.0000
+Upper Tail Dependence: 0.0000
+
+Gumbel Copula:
+Theta: 2.6835
+Lower Tail Dependence: 0.0000
+Upper Tail Dependence: 0.7053
+
+Gaussian Copula:
+Rho: 0.8060
+Lower Tail Dependence: 0.0000
+Upper Tail Dependence: 0.0000
+
+Student-t Copula:
+Rho: 0.8295
+Nu: 3.0720
+Lower Tail Dependence: 0.5706
+Upper Tail Dependence: 0.5706
+
+Mixture Copula Statica (Clayton + Frank + Gumbel + Gaussian + Student-t, pesi MLE):
+w_Clayton: 0.3204
+w_Frank: 0.0000
+w_Gumbel: 0.0000
+w_Gaussian: 0.0000
+w_Student-t: 0.6796
+Somma pesi (controllo): 1.000000
+
+=== Dipendenza centrale (30%-70%) ===
+
+Empirica P(0.30<U<=0.70, 0.30<V<=0.70): 0.2683
+Clayton   model: 0.2499, |errore|: 0.0185
+Frank     model: 0.2556, |errore|: 0.0127
+Gumbel    model: 0.2506, |errore|: 0.0177
+Gaussian  model: 0.2349, |errore|: 0.0334
+Student-t model: 0.2573, |errore|: 0.0110
+Mixture   model: 0.2549, |errore|: 0.0134
+
+=== Distanza C_n vs C_theta su griglia ===
+
+Clayton - MSE: 0.000060, Max|Delta|: 0.024073
+Frank   - MSE: 0.000048, Max|Delta|: 0.022985
+Gumbel  - MSE: 0.000072, Max|Delta|: 0.026693
+Gaussian- MSE: 0.000036, Max|Delta|: 0.024535
+Student-t- MSE: 0.000019, Max|Delta|: 0.017515
+Mixture - MSE: 0.000007, Max|Delta|: 0.010066
+
+=== AIC, BIC e Log-Likelihood (MLE) per ogni copula ===
+
+AIC e BIC piu bassi indicano il modello preferibile; una Log-Likelihood piu alta indica un migliore adattamento ai dati.
+Clayton - AIC: -3322.97, BIC: -3316.90, Log-Likelihood MLE: 1662.49
+Frank   - AIC: -3443.36, BIC: -3437.29, Log-Likelihood MLE: 1722.68
+Gumbel  - AIC: -3112.77, BIC: -3106.70, Log-Likelihood MLE: 1557.39
+Gaussian- AIC: -3352.69, BIC: -3346.61, Log-Likelihood MLE: 1677.34
+Student-t- AIC: -3849.92, BIC: -3837.78, Log-Likelihood MLE: 1926.96
+Mixture - AIC: -3951.16, BIC: -3890.42, Log-Likelihood MLE: 1985.58
+Nota Mixture: AIC/BIC calcolati con k=10 (6 parametri delle componenti + 4 pesi liberi).
+
+Risultato automatico: AIC -> Mixture | BIC -> Mixture | Log-Likelihood -> Mixture.
+
+Output completo salvato in: C:\Users\aless\Desktop\copula_function_python_lab\output\BTC-USD&ETH-USD_2010-01-01&2026-08-24.txt
+

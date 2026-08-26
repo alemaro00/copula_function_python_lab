@@ -16,8 +16,8 @@ from numpy.random import multivariate_normal
 from copulas.bivariate import Clayton, Frank, Gumbel
 
 #cambiare qualsiasi commodities, azione, strumento finanziario preso da yahoo finance
-waahid= "V"#"BTC-USD"#"GC=F"#"NG=F"
-ithnaan=  "MA"#"ETH-USD"#"SI=F"#"CL=F"
+waahid= "BZ=F"#"BTC-USD"#"GC=F"#"V"
+ithnaan=  "CL=F"#"ETH-USD"#"SI=F"#"MA"
 inizio_periodo="2010-01-01"
 fine_periodo="2026-08-24"
 
@@ -720,12 +720,12 @@ if SHOW_EMPIRICAL_SCATTER:
 if SHOW_EMPIRICAL_CONDITIONAL_CURVE: # pyright: ignore[reportUndefinedVariable]
     plot_conditional_mean_empirical_copula(u, v, bandwidth=0.05)
 
-print("\n=== Probabilita congiunte e condizionate empiriche per soglia ===")
+print("\n=== Probabilita congiunte e condizionate empiriche per soglia ===\n")
 print("Probabilita congiunta: indica quanto spesso i due asset si trovano contemporaneamente nella stessa fascia di rendimenti.")
 print("Risponde alla domanda: in una giornata qualsiasi, qual e' la probabilita che entrambi siano tra i propri rendimenti peggiori o migliori?")
 print("Probabilita condizionata: considera soltanto le giornate in cui il primo asset si trova nella fascia scelta.")
 print("Risponde alla domanda: in quelle giornate, qual e' la probabilita che anche il secondo asset sia nella stessa fascia?")
-print("\n--- Confronto delle probabilita congiunte nelle code opposte ---")
+print("\n--- Confronto delle probabilita congiunte nelle code opposte ---\n")
 print("Per ogni q confronto P(U<=q,V<=q) con P(U>1-q,V>1-q).")
 for q_left in [0.01, 0.05, 0.10, 0.15]:
     q_right = 1 - q_left
@@ -749,7 +749,7 @@ for q_left in [0.01, 0.05, 0.10, 0.15]:
 
 # Probabilita condizionate empiriche in entrambe le direzioni e su piu soglie.
 conditional_levels = [0.01, 0.025, 0.05, 0.10, 0.15, 0.20, 0.25]
-print("\n--- Dettaglio delle probabilita condizionate per soglia ---")
+print("\n--- Dettaglio delle probabilita condizionate per soglia ---\n")
 print(f"U = {waahid}, V = {ithnaan}")
 for q in conditional_levels:
     q_upper = 1 - q
@@ -882,7 +882,7 @@ p_center_mixture = (
     + mixture_weights[4] * p_center_student_t
 )
 
-print("\n=== Dipendenza centrale (30%-70%) ===")
+print("\n=== Dipendenza centrale (30%-70%) ===\n")
 print(f"Empirica P(0.30<U<=0.70, 0.30<V<=0.70): {p_emp_center:.4f}")
 print(
     f"Clayton   model: {p_center_clayton:.4f}, "
@@ -934,7 +934,7 @@ mse_gaussian, dmax_gaussian = copula_grid_distance_metrics(c_n_emp, c_grid_gauss
 mse_student_t, dmax_student_t = copula_grid_distance_metrics(c_n_emp, c_grid_student_t)
 mse_mixture, dmax_mixture = copula_grid_distance_metrics(c_n_emp, c_grid_mixture)
 
-print("\n=== Distanza C_n vs C_theta su griglia ===")
+print("\n=== Distanza C_n vs C_theta su griglia ===\n")
 print(f"Clayton - MSE: {mse_clayton:.6f}, Max|Delta|: {dmax_clayton:.6f}")
 print(f"Frank   - MSE: {mse_frank:.6f}, Max|Delta|: {dmax_frank:.6f}")
 print(f"Gumbel  - MSE: {mse_gumbel:.6f}, Max|Delta|: {dmax_gumbel:.6f}")
@@ -997,7 +997,8 @@ mixture_num_params = mixture_component_params + mixture_free_weights
 aic_mixture, bic_mixture = calculate_aic_bic(ll_mixture, mixture_num_params, n_obs)
 
 # Stampa dei risultati
-print("\n=== AIC, BIC e Log-Likelihood (MLE) per ogni copula ===")
+print("\n=== AIC, BIC e Log-Likelihood (MLE) per ogni copula ===\n")
+print("AIC e BIC piu bassi indicano il modello preferibile; una Log-Likelihood piu alta indica un migliore adattamento ai dati.")
 print(f"Clayton - AIC: {aic_clayton:.2f}, BIC: {bic_clayton:.2f}, Log-Likelihood MLE: {ll_clayton:.2f}")
 print(f"Frank   - AIC: {aic_frank:.2f}, BIC: {bic_frank:.2f}, Log-Likelihood MLE: {ll_frank:.2f}")
 print(f"Gumbel  - AIC: {aic_gumbel:.2f}, BIC: {bic_gumbel:.2f}, Log-Likelihood MLE: {ll_gumbel:.2f}")
@@ -1016,10 +1017,9 @@ model_scores = [
 best_aic_name = min(model_scores, key=lambda row: row[1])[0]
 best_bic_name = min(model_scores, key=lambda row: row[2])[0]
 best_ll_name = max(model_scores, key=lambda row: row[3])[0]
-print("Come leggere: AIC e BIC piu bassi indicano il modello preferibile; una Log-Likelihood piu alta indica un migliore adattamento ai dati.")
-print(f"Risultato automatico: AIC -> {best_aic_name} | BIC -> {best_bic_name} | Log-Likelihood -> {best_ll_name}.")
+print(f"\nRisultato automatico: AIC -> {best_aic_name} | BIC -> {best_bic_name} | Log-Likelihood -> {best_ll_name}.")
 
-print(f"\nOutput completo salvato in: {LOG_FILE_PATH}")
+print(f"\nOutput completo salvato in: {LOG_FILE_PATH}\n")
 sys.stdout = _original_stdout
 sys.stderr = _original_stderr
 _log_file_handle.close()

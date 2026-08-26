@@ -1,0 +1,228 @@
+Dati scaricati da Yahoo e salvati in cache: prezzi_close_cache.csv
+Il dataframe con GC=F e SI=F è:
+
+ Ticker             GC=F       SI=F
+Date                              
+2010-01-04  1117.699951  17.440001
+2010-01-05  1118.099976  17.781000
+2010-01-06  1135.900024  18.163000
+2010-01-07  1133.099976  18.333000
+2010-01-08  1138.199951  18.458000
+
+Numero di righe con almeno un NaN: 0
+Numero totale di celle NaN: 0
+
+Ticker             GC=F       SI=F
+Date                              
+2010-01-04  1117.699951  17.440001
+2010-01-05  1118.099976  17.781000
+2010-01-06  1135.900024  18.163000
+2010-01-07  1133.099976  18.333000
+2010-01-08  1138.199951  18.458000
+...                 ...        ...
+2026-08-17  4417.799805  66.121002
+2026-08-18  4366.000000  63.941002
+2026-08-19  4489.399902  65.734001
+2026-08-20  4516.299805  68.026001
+2026-08-21  4624.100098  69.466003
+
+[4183 rows x 2 columns]
+
+=== Rendimenti logaritmici ===
+
+Ticker          GC=F      SI=F
+Date                          
+2010-01-05  0.000358  0.019364
+2010-01-06  0.015795  0.021256
+2010-01-07 -0.002468  0.009316
+2010-01-08  0.004491  0.006795
+2010-01-11  0.010922  0.012116
+...              ...       ...
+2026-08-17  0.008502  0.017284
+2026-08-18 -0.011795 -0.033526
+2026-08-19  0.027872  0.027656
+2026-08-20  0.005974  0.034274
+2026-08-21  0.023589  0.020947
+
+[4182 rows x 2 columns]
+
+Test for Normality: Jarque-Bera
+
+GC=F -> p-value: 0.0000
+Distribuzione NON normale
+
+SI=F -> p-value: 0.0000
+Distribuzione NON normale
+
+
+Il quinto percentile di GC=F è: -0.01707454451316938
+Il novantacinquesimo percentile di GC=F è: 0.016621599463387097
+Il quinto percentile di SI=F è: -0.03269152547357161
+Il novantacinquesimo percentile di SI=F è: 0.0332905081870344
+
+Valori sotto il 5° percentile
+         GC=F      SI=F
+0   -0.120657 -0.376103
+1   -0.098206 -0.195457
+2   -0.065976 -0.123854
+3   -0.060963 -0.119594
+4   -0.060255 -0.116327
+..        ...       ...
+205 -0.017169 -0.032839
+206 -0.017138 -0.032792
+207 -0.017132 -0.032768
+208 -0.017091 -0.032766
+209 -0.017081 -0.032692
+
+[210 rows x 2 columns]
+
+Valori sopra il 95° percentile
+         GC=F      SI=F
+0    0.016622  0.033292
+1    0.016634  0.033333
+2    0.016679  0.033377
+3    0.016763  0.033452
+4    0.016769  0.033495
+..        ...       ...
+205  0.045568  0.078428
+206  0.046026  0.079020
+207  0.054422  0.088800
+208  0.057775  0.102215
+209  0.059054  0.131250
+
+[210 rows x 2 columns]
+
+Valori di u [0.49223046 0.94190772 0.34305522 ... 0.9897203  0.74778867 0.98207028]
+
+Valori di v [0.8718623  0.88811858 0.73296677 ... 0.92899833 0.95194836 0.88620607]
+
+Rho di Pearson tra GC=F e SI=F:0.7917
+Tau di Kendall tra GC=F e SI=F: 0.5966
+Rho di Spearman tra GC=F e SI=F: 0.7842
+Lower Tail Dependence (soglia q=0.05): 0.5787
+Upper Tail Dependence (soglia q=0.95): 0.4352
+
+Valori di u e v combinati
+ [[0.49223046 0.8718623 ]
+ [0.94190772 0.88811858]
+ [0.34305522 0.73296677]
+ ...
+ [0.9897203  0.92899833]
+ [0.74778867 0.95194836]
+ [0.98207028 0.88620607]]
+
+=== Probabilita congiunte e condizionate empiriche per soglia ===
+
+Probabilita congiunta: indica quanto spesso i due asset si trovano contemporaneamente nella stessa fascia di rendimenti.
+Risponde alla domanda: in una giornata qualsiasi, qual e' la probabilita che entrambi siano tra i propri rendimenti peggiori o migliori?
+Probabilita condizionata: considera soltanto le giornate in cui il primo asset si trova nella fascia scelta.
+Risponde alla domanda: in quelle giornate, qual e' la probabilita che anche il secondo asset sia nella stessa fascia?
+
+--- Confronto delle probabilita congiunte nelle code opposte ---
+
+Per ogni q confronto P(U<=q,V<=q) con P(U>1-q,V>1-q).
+C_n(0.01,0.01) = 0.0053  vs  P(U>0.99,V>0.99) = 0.0024  ->  SINISTRA > DESTRA
+C_n(0.05,0.05) = 0.0289  vs  P(U>0.95,V>0.95) = 0.0218  ->  SINISTRA > DESTRA
+C_n(0.10,0.10) = 0.0631  vs  P(U>0.90,V>0.90) = 0.0548  ->  SINISTRA > DESTRA
+C_n(0.15,0.15) = 0.0959  vs  P(U>0.85,V>0.85) = 0.0928  ->  SINISTRA > DESTRA
+
+--- Dettaglio delle probabilita condizionate per soglia ---
+
+U = GC=F, V = SI=F
+
+Soglia q=1.0% (coda superiore oltre 99.0%)
+  Coda inferiore: P(congiunta)=0.0053 | P(SI=F bassa | GC=F bassa)=53.66% [n=41] | P(GC=F bassa | SI=F bassa)=53.66% [n=41]
+  Coda superiore: P(congiunta)=0.0024 | P(SI=F alta | GC=F alta)=24.39% [n=41] | P(GC=F alta | SI=F alta)=24.39% [n=41]
+
+Soglia q=2.5% (coda superiore oltre 97.5%)
+  Coda inferiore: P(congiunta)=0.0132 | P(SI=F bassa | GC=F bassa)=52.88% [n=104] | P(GC=F bassa | SI=F bassa)=52.88% [n=104]
+  Coda superiore: P(congiunta)=0.0105 | P(SI=F alta | GC=F alta)=42.31% [n=104] | P(GC=F alta | SI=F alta)=42.31% [n=104]
+
+Soglia q=5.0% (coda superiore oltre 95.0%)
+  Coda inferiore: P(congiunta)=0.0289 | P(SI=F bassa | GC=F bassa)=57.89% [n=209] | P(GC=F bassa | SI=F bassa)=57.89% [n=209]
+  Coda superiore: P(congiunta)=0.0218 | P(SI=F alta | GC=F alta)=43.54% [n=209] | P(GC=F alta | SI=F alta)=43.54% [n=209]
+
+Soglia q=10.0% (coda superiore oltre 90.0%)
+  Coda inferiore: P(congiunta)=0.0631 | P(SI=F bassa | GC=F bassa)=63.16% [n=418] | P(GC=F bassa | SI=F bassa)=63.16% [n=418]
+  Coda superiore: P(congiunta)=0.0548 | P(SI=F alta | GC=F alta)=54.78% [n=418] | P(GC=F alta | SI=F alta)=54.78% [n=418]
+
+Soglia q=15.0% (coda superiore oltre 85.0%)
+  Coda inferiore: P(congiunta)=0.0959 | P(SI=F bassa | GC=F bassa)=63.96% [n=627] | P(GC=F bassa | SI=F bassa)=63.96% [n=627]
+  Coda superiore: P(congiunta)=0.0928 | P(SI=F alta | GC=F alta)=61.88% [n=627] | P(GC=F alta | SI=F alta)=61.88% [n=627]
+
+Soglia q=20.0% (coda superiore oltre 80.0%)
+  Coda inferiore: P(congiunta)=0.1332 | P(SI=F bassa | GC=F bassa)=66.63% [n=836] | P(GC=F bassa | SI=F bassa)=66.63% [n=836]
+  Coda superiore: P(congiunta)=0.1296 | P(SI=F alta | GC=F alta)=64.83% [n=836] | P(GC=F alta | SI=F alta)=64.83% [n=836]
+
+Soglia q=25.0% (coda superiore oltre 75.0%)
+  Coda inferiore: P(congiunta)=0.1719 | P(SI=F bassa | GC=F bassa)=68.80% [n=1045] | P(GC=F bassa | SI=F bassa)=68.80% [n=1045]
+  Coda superiore: P(congiunta)=0.1700 | P(SI=F alta | GC=F alta)=68.04% [n=1045] | P(GC=F alta | SI=F alta)=68.04% [n=1045]
+
+Clayton Copula:
+Theta: 2.9579
+Lower Tail Dependence: 0.7911
+Upper Tail Dependence: 0.0000
+
+Frank Copula:
+Theta: 7.8397
+Lower Tail Dependence: 0.0000
+Upper Tail Dependence: 0.0000
+
+Gumbel Copula:
+Theta: 2.4790
+Lower Tail Dependence: 0.0000
+Upper Tail Dependence: 0.6774
+
+Gaussian Copula:
+Rho: 0.7979
+Lower Tail Dependence: 0.0000
+Upper Tail Dependence: 0.0000
+
+Student-t Copula:
+Rho: 0.8029
+Nu: 6.6570
+Lower Tail Dependence: 0.3882
+Upper Tail Dependence: 0.3882
+
+Mixture Copula Statica (Clayton + Frank + Gumbel + Gaussian + Student-t, pesi MLE):
+w_Clayton: 0.0885
+w_Frank: 0.0570
+w_Gumbel: 0.0000
+w_Gaussian: 0.0143
+w_Student-t: 0.8402
+Somma pesi (controllo): 1.000000
+
+=== Dipendenza centrale (30%-70%) ===
+
+Empirica P(0.30<U<=0.70, 0.30<V<=0.70): 0.2449
+Clayton   model: 0.2397, |errore|: 0.0052
+Frank     model: 0.2450, |errore|: 0.0001
+Gumbel    model: 0.2413, |errore|: 0.0036
+Gaussian  model: 0.2323, |errore|: 0.0126
+Student-t model: 0.2410, |errore|: 0.0039
+Mixture   model: 0.2409, |errore|: 0.0039
+
+=== Distanza C_n vs C_theta su griglia ===
+
+Clayton - MSE: 0.000115, Max|Delta|: 0.031624
+Frank   - MSE: 0.000028, Max|Delta|: 0.017692
+Gumbel  - MSE: 0.000025, Max|Delta|: 0.015206
+Gaussian- MSE: 0.000003, Max|Delta|: 0.006778
+Student-t- MSE: 0.000001, Max|Delta|: 0.005520
+Mixture - MSE: 0.000002, Max|Delta|: 0.006419
+
+=== AIC, BIC e Log-Likelihood (MLE) per ogni copula ===
+
+AIC e BIC piu bassi indicano il modello preferibile; una Log-Likelihood piu alta indica un migliore adattamento ai dati.
+Clayton - AIC: -3153.97, BIC: -3147.63, Log-Likelihood MLE: 1577.98
+Frank   - AIC: -3990.15, BIC: -3983.82, Log-Likelihood MLE: 1996.08
+Gumbel  - AIC: -3889.12, BIC: -3882.78, Log-Likelihood MLE: 1945.56
+Gaussian- AIC: -4220.16, BIC: -4213.82, Log-Likelihood MLE: 2111.08
+Student-t- AIC: -4369.76, BIC: -4357.08, Log-Likelihood MLE: 2186.88
+Mixture - AIC: -4370.34, BIC: -4306.95, Log-Likelihood MLE: 2195.17
+Nota Mixture: AIC/BIC calcolati con k=10 (6 parametri delle componenti + 4 pesi liberi).
+
+Risultato automatico: AIC -> Mixture | BIC -> Student-t | Log-Likelihood -> Mixture.
+
+Output completo salvato in: C:\Users\aless\Desktop\copula_function_python_lab\output\GC=F&SI=F_2010-01-01&2026-08-24.txt
+
