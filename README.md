@@ -13,6 +13,124 @@ A static mixture copula of Clayton, Frank and Gumbel was also estimated by maxim
 
 ---
 
+# File generati
+
+L’output completo della console viene salvato automaticamente in:
+
+```text
+output/ASSET1&ASSET2_DATA-INIZIALE&DATA-FINALE.txt
+
+### Probabilità congiunte e condizionate
+
+Per ogni soglia `q`, il programma osserva due fasce:
+
+- coda inferiore: rendimenti compresi tra i peggiori `q%` di ciascun asset;
+- coda superiore: rendimenti compresi tra i migliori `q%` di ciascun asset.
+
+#### Probabilità congiunta
+
+Risponde alla domanda:
+
+> In una giornata qualsiasi, qual è la probabilità che entrambi gli asset
+> siano contemporaneamente nella fascia indicata?
+
+Esempio:
+
+`P(congiunta)=0.0323`
+
+significa che nel 3,23% di tutte le giornate entrambi gli asset sono stati
+contemporaneamente nel proprio 5% peggiore.
+
+#### Probabilità condizionata
+
+Risponde alla domanda:
+
+> Considerando soltanto le giornate in cui il primo asset è nella fascia
+> indicata, qual è la probabilità che anche il secondo si trovi nella propria
+> fascia corrispondente?
+
+Esempio:
+
+`P(MA bassa | V bassa)=64.59% [n=209]`
+
+significa che, tra le 209 giornate in cui Visa era nel proprio 5% peggiore,
+Mastercard si trovava nel proprio 5% peggiore nel 64,59% dei casi.
+
+La probabilità inversa risponde alla stessa domanda scambiando il ruolo dei
+due asset.
+
+### Pearson, Spearman e Kendall
+
+Questi valori sintetizzano quanto i due rendimenti tendono a muoversi insieme.
+
+- vicino a `1`: forte movimento nella stessa direzione;
+- vicino a `0`: legame debole;
+- vicino a `-1`: movimento prevalentemente opposto.
+
+Spearman e Kendall sono particolarmente utili nel progetto perché misurano
+la concordanza dell’ordine dei rendimenti e sono meno dipendenti dalla forma
+della loro distribuzione.
+
+### Dipendenza nelle code
+
+- `Lower Tail Dependence`: capacità del modello di rappresentare giornate
+  estremamente negative condivise;
+- `Upper Tail Dependence`: capacità di rappresentare giornate estremamente
+  positive condivise.
+
+Un valore più alto indica una maggiore tendenza dei due asset a trovarsi
+insieme in quella coda. Non rappresenta però direttamente la probabilità
+condizionata osservata a una specifica soglia: per quella lettura è preferibile
+la sezione delle probabilità empiriche.
+
+## Come individuare il modello migliore
+
+Il programma confronta sei modelli:
+
+- Clayton;
+- Frank;
+- Gumbel;
+- Gaussian;
+- Student-t;
+- Mixture delle cinque copule precedenti.
+
+### MSE e Max|Delta|
+
+Confrontano la copula stimata con quella empirica su una griglia.
+
+- MSE più basso: minore errore medio;
+- Max|Delta| più basso: minore errore nel punto peggiore.
+
+### Log-Likelihood
+
+Una Log-Likelihood più alta indica che il modello si adatta meglio ai dati,
+ma non penalizza direttamente i modelli più complessi.
+
+### AIC e BIC
+
+AIC e BIC confrontano adattamento e complessità.
+
+- AIC più basso: modello preferibile secondo AIC;
+- BIC più basso: modello preferibile secondo BIC;
+- BIC penalizza più severamente i modelli complessi.
+
+La riga `Risultato automatico` mostra il vincitore per ciascun criterio.
+
+Se AIC e BIC indicano lo stesso modello, la scelta è più chiara.
+Se indicano modelli differenti, non esiste un vincitore assoluto: AIC tende
+a favorire l’adattamento, mentre BIC tende a preferire la semplicità.
+
+## Limiti dell’analisi
+
+- I risultati descrivono il periodo storico selezionato e possono cambiare
+  scegliendo altre date.
+- Dipendenza non significa causalità: il codice non stabilisce che un asset
+  provochi il movimento dell’altro.
+- Le probabilità sono frequenze storiche empiriche, non previsioni garantite.
+- Un legame forte nelle code non implica che i rendimenti abbiano la stessa
+  ampiezza.
+- I risultati dipendono dalla qualità e disponibilità dei dati Yahoo Finance.
+
 ## Mathematical Foundations
 
 ### Sklar's Theorem
