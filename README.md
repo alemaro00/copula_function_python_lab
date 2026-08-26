@@ -1,24 +1,89 @@
-# copula_function_python_lab
+# Analisi della dipendenza tra due asset mediante copule
 
-The goal of this repository is to understand the copula functions to keep the non linear dependency, during extreme events, of two or more economic variables.
+Questo progetto analizza come i **rendimenti logaritmici giornalieri di due asset** tendono a muoversi insieme, con particolare attenzione alle giornate caratterizzate da rendimenti molto bassi o molto alti.
 
-In this code it is possible to see how Gold and Silver are well correlated during extreme events.
-Among the parametric copulas analyzed (Clayton, Frank, Gumbel, Gaussian, Student-t), the Student-t copula achieves the best fit according to AIC, BIC, log-likelihood and grid distance metrics (lowest MSE and Max|Delta| against the empirical copula C_n).
-It captures symmetric tail dependence: when Gold experiences an extreme move (positive or negative), there is a high probability that Silver moves in the same direction.
+Il programma risponde principalmente a queste domande:
 
-However, empirically the tail dependence is asymmetric: the lower tail (joint crashes) is stronger than the upper tail (joint rallies), as confirmed by the empirical comparison across opposite quantiles — C_n(q,q) > P(U>1-q, V>1-q) at every tested level (1%, 5%, 10%, 15%).
-The Student-t copula, being symmetric by construction, cannot fully capture this asymmetry. A Clayton copula or a skewed extension would be needed to model it exactly, but among standard parametric families the Student-t remains the closest approximation to the observed joint distribution.
+- quanto sono collegati i rendimenti giornalieri dei due asset?
+- se un asset rientra tra i propri rendimenti peggiori, quanto spesso accade lo stesso all'altro?
+- quanto spesso entrambi presentano contemporaneamente rendimenti estremi?
+- quale copula descrive meglio la dipendenza osservata?
 
-A static mixture copula of Clayton, Frank and Gumbel was also estimated by maximising the joint log-likelihood over the three component weights (w_Clayton, w_Frank, w_Gumbel ≥ 0, sum = 1). This combines lower-tail specialisation (Clayton), central dependence (Frank) and upper-tail specialisation (Gumbel) into a single model. The mixture improves over each single Archimedean copula but does not surpass the Student-t in AIC/BIC, confirming that the elliptic family provides a better global description of the Gold–Silver joint distribution than any convex combination of the three Archimedean families.
+I risultati descrivono il campione storico selezionato: non costituiscono una previsione dei rendimenti futuri.
+
+## Configurazione dell'analisi
+
+Aprire [`src/esame_lab_python.py`](src/esame_lab_python.py) e modificare le quattro variabili iniziali:
+
+```python
+waahid = "BZ=F"
+ithnaan = "CL=F"
+inizio_periodo = "2010-01-01"
+fine_periodo = "2026-08-24"
+```
+
+- `waahid`: ticker del primo asset, rappresentato nell'analisi da `U`;
+- `ithnaan`: ticker del secondo asset, rappresentato da `V`;
+- `inizio_periodo`: data iniziale del campione;
+- `fine_periodo`: data finale richiesta.
+
+I ticker devono essere riconosciuti da Yahoo Finance. Alcuni esempi sono `BTC-USD` e `ETH-USD`, `GC=F` e `SI=F`, `V` e `MA`, oppure `BZ=F` e `CL=F`.
+
+## Installazione e avvio con uv
+
+Il progetto usa Python 3.14 e gestisce ambiente e dipendenze con [uv](https://docs.astral.sh/uv/).
+
+```powershell
+uv sync
+uv run python src/esame_lab_python.py
+```
+
+In alternativa, se l'ambiente virtuale esiste già:
+
+```powershell
+.\.venv\Scripts\python.exe .\src\esame_lab_python.py
+```
+
+I grafici vengono mostrati in successione. In alcuni casi è necessario **chiudere il grafico corrente** affinché il programma prosegua. Il confronto finale può richiedere più tempo perché valuta anche la copula Student-t su una griglia.
+
+## Cosa fa il programma
+
+1. Scarica da Yahoo Finance i prezzi di chiusura, oppure riutilizza quelli presenti nella cache.
+2. Allinea le osservazioni dei due asset e calcola i rendimenti logaritmici giornalieri.
+3. Mostra rendimenti, QQ plot, distribuzioni e misure di correlazione.
+4. Trasforma i rendimenti in ranghi percentili, chiamati pseudo-osservazioni `U` e `V`.
+5. Costruisce la copula empirica e calcola probabilità congiunte e condizionate per diverse soglie.
+6. Stima Clayton, Frank, Gumbel, Gaussian, Student-t e una mixture delle cinque copule.
+7. Confronta i modelli mediante distanza dalla copula empirica, Log-Likelihood, AIC e BIC.
+8. Salva automaticamente l'intero output della console nella cartella `output`.
 
 ---
 
-# File generati
+## Guida alla lettura dell'output
+
+### File generati e cache
 
 L’output completo della console viene salvato automaticamente in:
 
 ```text
 output/ASSET1&ASSET2_DATA-INIZIALE&DATA-FINALE.txt
+```
+
+Per esempio:
+
+```text
+output/BZ=F&CL=F_2010-01-01&2026-08-24.txt
+```
+
+I prezzi scaricati vengono conservati in `src/prezzi_close_cache.csv`. La cache evita di scaricare nuovamente dati già disponibili; se ticker o periodo richiesti non sono coperti, il programma prova a recuperarli da Yahoo Finance e aggiorna il file.
+
+I grafici vengono visualizzati ma non salvati automaticamente.
+
+### Rendimenti e percentili
+
+Il 5° percentile separa approssimativamente il 5% dei rendimenti giornalieri peggiori dal restante 95%. Il 95° percentile individua invece il limite oltre il quale si trova approssimativamente il 5% dei rendimenti migliori.
+
+Le soglie sono calcolate **separatamente per ogni asset**. Dire che entrambi sono nel proprio 5% peggiore non significa che abbiano ottenuto lo stesso rendimento, ma che ciascuno si trova nella fascia peggiore della propria distribuzione storica.
 
 ### Probabilità congiunte e condizionate
 
@@ -59,6 +124,8 @@ Mastercard si trovava nel proprio 5% peggiore nel 64,59% dei casi.
 La probabilità inversa risponde alla stessa domanda scambiando il ruolo dei
 due asset.
 
+Con pseudo-osservazioni basate sui ranghi e la stessa soglia per entrambi, i due eventi condizionanti contengono normalmente lo stesso numero di osservazioni; per questo le due probabilità condizionate possono risultare uguali o quasi uguali.
+
 ### Pearson, Spearman e Kendall
 
 Questi valori sintetizzano quanto i due rendimenti tendono a muoversi insieme.
@@ -82,6 +149,10 @@ Un valore più alto indica una maggiore tendenza dei due asset a trovarsi
 insieme in quella coda. Non rappresenta però direttamente la probabilità
 condizionata osservata a una specifica soglia: per quella lettura è preferibile
 la sezione delle probabilità empiriche.
+
+### Dipendenza centrale
+
+La sezione `Dipendenza centrale (30%-70%)` confronta quanto spesso entrambi gli asset si trovano contemporaneamente nella parte centrale delle rispettive distribuzioni. Serve a verificare se un modello descrive bene non soltanto gli eventi estremi, ma anche le osservazioni ordinarie.
 
 ## Come individuare il modello migliore
 
@@ -120,6 +191,8 @@ Se AIC e BIC indicano lo stesso modello, la scelta è più chiara.
 Se indicano modelli differenti, non esiste un vincitore assoluto: AIC tende
 a favorire l’adattamento, mentre BIC tende a preferire la semplicità.
 
+Per la mixture, AIC e BIC considerano **10 parametri complessivi**: sei parametri delle cinque componenti e quattro pesi liberi. In questo modo il modello più flessibile riceve una penalizzazione coerente con la sua complessità.
+
 ## Limiti dell’analisi
 
 - I risultati descrivono il periodo storico selezionato e possono cambiare
@@ -129,28 +202,32 @@ a favorire l’adattamento, mentre BIC tende a preferire la semplicità.
 - Le probabilità sono frequenze storiche empiriche, non previsioni garantite.
 - Un legame forte nelle code non implica che i rendimenti abbiano la stessa
   ampiezza.
+- Le soglie più estreme, come l'1%, contengono poche osservazioni e producono
+  quindi stime meno stabili.
 - I risultati dipendono dalla qualità e disponibilità dei dati Yahoo Finance.
 
-## Mathematical Foundations
+## Fondamenti teorici
 
-### Sklar's Theorem
-Every joint CDF $H(x,y)$ with marginals $F(x)$ and $G(y)$ can be written as:
+### Teorema di Sklar
+Ogni funzione di distribuzione congiunta $H(x,y)$, con distribuzioni marginali $F(x)$ e $G(y)$, può essere scritta come:
 
 $$H(x,y) = C\bigl(F(x),\, G(y)\bigr)$$
 
-where $C:[0,1]^2\to[0,1]$ is a **copula** — a joint CDF with uniform marginals on $[0,1]$. If $F$ and $G$ are continuous, $C$ is unique.
+dove $C:[0,1]^2\to[0,1]$ è una **copula**, cioè una distribuzione congiunta con marginali uniformi in $[0,1]$. Se $F$ e $G$ sono continue, la copula è unica.
 
-### Pseudo-observations
-Marginals are estimated non-parametrically via the empirical CDF using ranks:
+### Pseudo-osservazioni
+Le marginali vengono stimate in modo non parametrico e i rendimenti sono trasformati mediante i ranghi:
 
 $$u_i = \frac{\text{rank}(x_i)}{n+1}, \quad v_i = \frac{\text{rank}(y_i)}{n+1}$$
 
-### Empirical Copula
+### Copula empirica
 $$C_n(u,v) = \frac{1}{n}\sum_{i=1}^{n} \mathbf{1}(u_i \le u,\; v_i \le v)$$
+
+Questa quantità rappresenta la quota di osservazioni che soddisfa contemporaneamente entrambe le condizioni.
 
 ---
 
-### Parametric Copula Families
+### Famiglie di copule parametriche
 
 #### Clayton Copula ($\theta > 0$, lower-tail dependence)
 
@@ -221,22 +298,22 @@ $$\lambda_L = \lambda_U = 2\,t_{\nu+1}\!\left(-\sqrt{\frac{(\nu+1)(1-\rho)}{1+\r
 
 ---
 
-### Static Mixture Copula
+### Mixture statica
 
-A mixture copula is a convex combination of copula densities:
+La mixture utilizzata dal programma combina Clayton, Frank, Gumbel, Gaussian e Student-t:
 
-$$C_{mix}(u,v) = \sum_{j=1}^{k} w_j\, C_j(u,v), \quad w_j \ge 0,\; \sum_{j=1}^{k} w_j = 1$$
+$$C_{mix}(u,v) = \sum_{j=1}^{5} w_j\, C_j(u,v), \quad w_j \ge 0,\; \sum_{j=1}^{5} w_j = 1$$
 
-The weights $\mathbf{w}=(w_1,\ldots,w_k)$ are estimated by maximising the mixture log-likelihood function:
+I parametri delle singole componenti vengono prima stimati sugli stessi dati. I pesi sono poi determinati massimizzando la Log-Likelihood della densità mixture:
 
-$$\ell(\mathbf{w}) = \sum_{i=1}^{n} \ln\!\left(\sum_{j=1}^{k} w_j\, c_j(u_i,v_i)\right)$$
+$$\ell(\mathbf{w}) = \sum_{i=1}^{n} \ln\!\left(\sum_{j=1}^{5} w_j\, c_j(u_i,v_i)\right)$$
 
-Because numerical optimisers minimise, the code solves the equivalent minimisation:
+Poiché l'ottimizzatore numerico minimizza, il programma risolve il problema equivalente:
 
-$$\hat{\mathbf{w}} = \arg\min_{\mathbf{w}}\; -\ell(\mathbf{w}) \quad \text{subject to } w_j \ge 0,\; \sum_{j=1}^{k} w_j = 1$$
+$$\hat{\mathbf{w}} = \arg\min_{\mathbf{w}}\; -\ell(\mathbf{w}) \quad \text{con } w_j \ge 0,\; \sum_{j=1}^{5} w_j = 1$$
 
-solved via SLSQP (Sequential Least Squares Programming). The parametric component parameters ($\theta$, $\rho$, $\nu$) are held fixed at their individual MLE estimates; only the $k-1$ free weights are optimised.
+L'ottimizzazione usa SLSQP. I parametri delle componenti ($\theta$, $\rho$, $\nu$) restano fissati alle rispettive stime MLE e vengono ottimizzati soltanto i quattro pesi liberi.
 
-For model comparison, AIC and BIC are computed with $k-1$ free parameters (one weight is determined by the sum constraint):
+Per il confronto tramite AIC e BIC, il codice usa $p=10$: sei parametri delle componenti e quattro pesi liberi. Un peso non è libero perché la somma deve essere uguale a uno.
 
-$$\text{AIC} = 2(k-1) - 2\hat\ell, \qquad \text{BIC} = (k-1)\ln n - 2\hat\ell$$
+$$\text{AIC} = 2p - 2\hat\ell, \qquad \text{BIC} = p\ln n - 2\hat\ell, \qquad p=10$$
